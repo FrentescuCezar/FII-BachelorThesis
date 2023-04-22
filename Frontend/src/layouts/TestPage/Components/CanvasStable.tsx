@@ -9,12 +9,9 @@ interface CanvasProps {
     color: string;
     brushSize: number;
     tool: 'pen' | 'eraser';
-    setUndo: (undo: () => void) => void;
-    setRedo: (redo: () => void) => void;
-
 }
 
-const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool, setUndo, setRedo }) => {
+const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool }) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [drawing, setDrawing] = useState(false);
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -49,6 +46,14 @@ const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool, setUndo, setRed
             }
         }
     }, [canvasRef]);
+
+    //Make the brush more smooth
+    useEffect(() => {
+        if (context) {
+            context.lineJoin = "round";
+            context.lineCap = "round";
+        }
+    }, [context]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -189,19 +194,6 @@ const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool, setUndo, setRed
             }
         };
     }, [context]);
-
-    const undoCanvas = () => {
-        if (canvasRef.current) {
-            undo();
-        }
-    };
-
-    const redoCanvas = () => {
-        if (canvasRef.current) {
-            redo();
-        }
-    };
-
 
 
     return (

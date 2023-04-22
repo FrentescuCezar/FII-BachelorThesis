@@ -1,0 +1,322 @@
+:root {
+  --mainOpacity: rgba(0, 0, 0, 0.55);
+}
+
+
+.dark-overlay {
+  background-color: rgba(0, 0, 0, 0.35);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ########### ########## ###########*/
+.navbar-toggler-mobile {
+  display: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+@media (max-width: 911px) {
+  .navbar-toggler-mobile {
+    display: block;
+    color: black;
+  }
+}
+
+
+.main-color-gray {
+  background-color: #fcf9f9;
+  /* Replace with the shade of gray you want to use */
+  color: #333333;
+  /* Replace with the color you want to use for text and icons inside the navbar */
+}
+
+.main-color-gray-button {
+  background-color: #e8e8e8;
+  color: #333333;
+  font-weight: 600;
+}
+
+.bg-gray {
+  background-color: #888;
+}
+
+.main-color-red {
+  background-color: #ef2222;
+  /* Replace with the shade of gray you want to use */
+  color: #333333;
+  /* Replace with the color you want to use for text and icons inside the navbar */
+}
+
+.shadow-sm {
+  box-shadow: 0 20px 100px rgba(0, 0, 0, 0.5);
+  /* Replace with the shadow properties you want to use */
+}
+
+.btn-black-bold {
+  font-size: 1.3rem;
+  /* Replace with the desired font size */
+
+  /* Add bold weight */
+  color: black;
+  /* Set color to black */
+}
+
+.btn-black-bold:hover {
+  color: red;
+  /* Set rgb(205, 0, 0) to black */
+}
+
+.btn-red-hover {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  color: rgb(5, 2, 35);
+  font-size: 1.25rem;
+}
+
+.btn-red-hover:hover {
+  color: rgb(255, 0, 0);
+  background-color: transparent;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 999;
+  display: none;
+  /* hide the footer by default */
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #fcf9f9;
+}
+
+.wrapper.pb-5 {
+  padding-bottom: 100px;
+  /* add padding to the bottom of the page to make space for the footer */
+}
+
+/* show the footer when the user scrolls down */
+@media (min-height: 500px) {
+  .footer {
+    display: block;
+  }
+}
+
+.card {
+  max-width: 1200px;
+  /* adjust as needed */
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card-img-top {
+  width: 150px;
+  /* adjust as needed */
+  height: 150px;
+  /* adjust as needed */
+  object-fit: contain;
+}
+
+
+@media (min-width: 992px) {
+  .guess-form {
+    width: 50%;
+  }
+}
+
+@media (max-width: 991px) {
+  .guess-form {
+    width: 95%;
+  }
+}
+
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 0.5s ease;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat p {
+  margin: 0;
+  line-height: 2;
+}
+
+.hp {
+  background-color: #3F88C5;
+  color: #ffffff;
+}
+
+.attack {
+  background-color: #ff0033;
+  color: #ffffff;
+}
+
+.defense {
+  background-color: #ffa630;
+  color: #ffffff;
+}
+
+.spDefense {
+  background-color: #f57c73;
+  color: #ffffff;
+}
+
+.speed {
+  background-color: #f6ac69;
+  color: #ffffff;
+}
+
+.baseTotal {
+  background-color: #9197AE;
+  color: #ffffff;
+}
+
+.stat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  padding: 5px 10px;
+  margin: 5px;
+
+}
+
+
+
+/* ########### ########### ###########*/
+
+
+.main-color {
+  background-color: #0e76a8;
+}
+
+
+.col-image-right {
+  background-image: url("./Images/PublicImages/image-1.jpg");
+  height: 25em !important;
+}
+
+.lost-image {
+  background-image: url("./Images/PublicImages/image-1.jpg");
+  background-color: #f2f2f2;
+  /* add this line */
+  height: 25em !important;
+  width: "512";
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle-toggle {
+  width: 100%;
+  height: 100%;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.circle-toggle:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.custom-slider {
+  width: 20%;
+  height: 10px;
+  margin: 10px 0;
+  background-color: #ddd;
+}
+
+.custom-slider input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background-color: #e81a1a;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media (max-width: 576px) {
+  .pokemon-image {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (min-width: 577px) {
+  .pokemon-image {
+    width: 512px;
+    height: 512px;
+  }
+}
+
+/* set the height based on the width to make it a square */
+
+
+.homepage-carousel-title {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.book-div {
+  width: 480px;
+  height: 384px;
+}
+
+.inactiveLink {
+  pointer-events: none;
+  cursor: default;
+}

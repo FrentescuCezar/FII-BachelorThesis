@@ -17,12 +17,13 @@ const PaintPage: React.FC = () => {
 
     const MAX_HISTORY_SIZE = 100;
 
-    const [stickmen, setStickmen] = useState<{ x: number; y: number }[]>([]);
+    const [stickmen, setStickmen] = useState<{ x: number; y: number }[]>([])
+    const scaleFactor = Math.min(window.innerWidth / 512, window.innerHeight / 512);
+    ;
 
     const addStickman = () => {
-        setStickmen([...stickmen, { x: window.innerWidth / 2, y: window.innerHeight / 2 }]);
+        setStickmen([...stickmen, { x: 256 - 80, y: 256 - 190 }]);
     };
-
 
     const undo = () => {
         if (historyIndex <= 0 || !context) return;
@@ -93,28 +94,42 @@ const PaintPage: React.FC = () => {
 
             <div>
                 <button onClick={addStickman}>Add</button>
-                <Stage width={window.innerWidth} height={window.innerHeight}>
-                    <Layer>
-                        <rect
-                            x={0}
-                            y={0}
-                            width={window.innerWidth}
-                            height={window.innerHeight}
-                            fill="black"
-                            onClick={addStickman}
-                        />
-                        {stickmen.map((stickman, index) => (
-                            <Stickman
-                                key={index}
-                                x={stickman.x}
-                                y={stickman.y}
-                                draggable
+                <div
+                    style={{
+                        backgroundColor: 'black',
+                        width: 512,
+                        height: 512,
+                        position: 'relative',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <Stage
+                        width={512}
+                        height={512}
+                        scaleX={scaleFactor}
+                        scaleY={scaleFactor}
+                    >
+                        <Layer>
+                            <rect
+                                x={0}
+                                y={0}
+                                width={512}
+                                height={512}
+                                fill="black"
+                                onClick={addStickman}
                             />
-                        ))}
-                    </Layer>
-                </Stage>
+                            {stickmen.map((stickman, index) => (
+                                <Stickman
+                                    key={index}
+                                    x={stickman.x}
+                                    y={stickman.y}
+                                    draggable
+                                />
+                            ))}
+                        </Layer>
+                    </Stage>
+                </div>
             </div>
-
         </div>
     );
 }

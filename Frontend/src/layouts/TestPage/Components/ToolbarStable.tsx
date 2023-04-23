@@ -9,7 +9,8 @@ interface ToolbarProps {
     setBrushSize: (size: number) => void;
     tool: 'pen' | 'eraser';
     setTool: (tool: 'pen' | 'eraser') => void;
-
+    undo: () => void;
+    redo: () => void;
 }
 
 const ToolbarStable: React.FC<ToolbarProps> = ({
@@ -19,7 +20,8 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
     setBrushSize,
     tool,
     setTool,
-
+    undo,
+    redo
 }) => {
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -81,10 +83,10 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
                 value={brushSize}
                 onChange={handleBrushSizeChange}
             />
-            <button>
+            <button onClick={undo}>
                 Undo
             </button>
-            <button>
+            <button onClick={redo}>
                 Redo
             </button>
             <button>

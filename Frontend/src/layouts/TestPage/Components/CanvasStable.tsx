@@ -9,20 +9,32 @@ interface CanvasProps {
     color: string;
     brushSize: number;
     tool: 'pen' | 'eraser';
+    undo: () => void;
+    redo: () => void;
+    saveCanvasState: () => void;
+    context: CanvasRenderingContext2D | null;
+    setContext: (context: CanvasRenderingContext2D | null) => void;
+    bufferDimensions: { width: number; height: number };
 }
 
-const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool }) => {
+const CanvasStable: React.FC<CanvasProps> = ({ color,
+    brushSize,
+    tool,
+    undo,
+    redo,
+    saveCanvasState,
+    context,
+    setContext,
+    bufferDimensions
+}) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [drawing, setDrawing] = useState(false);
-    const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 
     const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
-    const [bufferDimensions, setBufferDimensions] = useState({ width: 512, height: 512 });
 
     const [canvasImage, setCanvasImage] = useState<ImageData | null>(null);
 
-    const [history, setHistory] = useState<ImageData[]>([]);
-    const [historyIndex, setHistoryIndex] = useState(-1);
+
 
     const getMouseCoords = (event: React.MouseEvent<HTMLCanvasElement>): [number, number] => {
         const canvas = event.currentTarget;
@@ -81,19 +93,6 @@ const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool }) => {
 
 
 
-    const undo = () => {
-        if (historyIndex <= 0 || !context) return;
-
-        setHistoryIndex((prevIndex) => prevIndex - 1);
-        context.putImageData(history[historyIndex - 1], 0, 0);
-    };
-
-    const redo = () => {
-        if (historyIndex >= history.length - 1 || !context) return;
-
-        setHistoryIndex((prevIndex) => prevIndex + 1);
-        context.putImageData(history[historyIndex + 1], 0, 0);
-    };
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -132,26 +131,6 @@ const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool }) => {
     };
 
 
-    const saveCanvasState = () => {
-        if (!context) return;
-
-        // Remove all future states from the history stack when making a new change
-        if (historyIndex !== history.length - 1) {
-            setHistory((prevHistory) => prevHistory.slice(0, historyIndex + 1));
-        }
-
-        // Save the current canvas state
-        const newCanvasState = context.getImageData(0, 0, bufferDimensions.width, bufferDimensions.height);
-
-        setHistory((prevHistory) => {
-            if (prevHistory.length >= MAX_HISTORY_SIZE) {
-                return [...prevHistory.slice(1), newCanvasState];
-            } else {
-                return [...prevHistory, newCanvasState];
-            }
-        });
-        setHistoryIndex((prevIndex) => (prevIndex < MAX_HISTORY_SIZE - 1 ? prevIndex + 1 : prevIndex));
-    };
 
 
     useEffect(() => {
@@ -209,4 +188,4 @@ const Canvas: React.FC<CanvasProps> = ({ color, brushSize, tool }) => {
     );
 };
 
-export default Canvas;
+export default CanvasStable;

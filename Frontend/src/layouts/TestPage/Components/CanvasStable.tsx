@@ -131,12 +131,13 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
     };
 
     const updateBrushSizeIndicator = (event: MouseEvent<HTMLCanvasElement>) => {
-        if (brushSizeIndicatorRef.current && showBrushSizeIndicator) {
+        if (brushSizeIndicatorRef.current && showBrushSizeIndicator ) {
             const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
             const scrollY = window.pageYOffset || document.documentElement.scrollTop;
             brushSizeIndicatorRef.current.style.left = `${event.clientX + scrollX}px`;
             brushSizeIndicatorRef.current.style.top = `${event.clientY + scrollY}px`;
         }
+
     };
 
     const handleMouseLeave = (event: React.MouseEvent<HTMLCanvasElement>) => {

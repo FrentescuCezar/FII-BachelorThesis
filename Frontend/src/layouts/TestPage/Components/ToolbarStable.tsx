@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SketchPicker, ColorResult } from 'react-color';
-import { FaPencilAlt, FaEraser, FaSave } from 'react-icons/fa';
+import { FaPencilAlt, FaEraser, FaSave, FaUndo, FaRedo } from 'react-icons/fa';
 
 interface ToolbarProps {
     color: string;
@@ -42,14 +42,14 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
             <button onClick={() => setTool('pen')}>
                 <FaPencilAlt
                     size={24}
-                    color={tool === 'pen' ? 'blue' : 'black'}
+                    color={tool === 'pen' ? 'red' : 'black'}
                     style={{ verticalAlign: 'middle' }}
                 />
             </button>
             <button onClick={() => setTool('eraser')}>
                 <FaEraser
                     size={24}
-                    color={tool === 'eraser' ? 'blue' : 'black'}
+                    color={tool === 'eraser' ? 'red' : 'black'}
                     style={{ verticalAlign: 'middle' }}
                 />
             </button>
@@ -84,10 +84,16 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
                 onChange={handleBrushSizeChange}
             />
             <button onClick={undo}>
-                Undo
+                <FaUndo
+                    size={24}
+                    style={{ verticalAlign: 'middle' }}
+                />
             </button>
             <button onClick={redo}>
-                Redo
+                <FaRedo
+                    size={24}
+                    style={{ verticalAlign: 'middle' }}
+                />
             </button>
             <button>
                 <FaSave size={24} style={{ verticalAlign: 'middle' }} />

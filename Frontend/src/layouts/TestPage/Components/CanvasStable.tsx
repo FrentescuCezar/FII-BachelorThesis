@@ -131,7 +131,7 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
     };
 
     const updateBrushSizeIndicator = (event: MouseEvent<HTMLCanvasElement>) => {
-        if (brushSizeIndicatorRef.current && showBrushSizeIndicator ) {
+        if (brushSizeIndicatorRef.current && showBrushSizeIndicator) {
             const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
             const scrollY = window.pageYOffset || document.documentElement.scrollTop;
             brushSizeIndicatorRef.current.style.left = `${event.clientX + scrollX}px`;
@@ -141,7 +141,7 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
     };
 
     const handleMouseLeave = (event: React.MouseEvent<HTMLCanvasElement>) => {
-        handleMouseUp();
+        //handleMouseUp();
         setShowBrushSizeIndicator(false);
     };
 
@@ -154,6 +154,13 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
         }
     }, [brushSize]);
 
+    const handleMouseEnter = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        if (drawing) {
+            const [x, y] = getMouseCoords(event);
+            context?.moveTo(x, y);
+        }
+        setShowBrushSizeIndicator(true);
+    };
 
     const handleMouseUp = () => {
         if (!context) return;
@@ -222,16 +229,18 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
                     marginTop: `-${brushSize / 2}px`,
                 }}
             />
-            <canvas
-                ref={canvasRef}
-                width={bufferDimensions.width}
-                height={bufferDimensions.height}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseLeave}
-                onMouseEnter={() => setShowBrushSizeIndicator(true)}
-                className="canvas"
-            />
+            <div className="canvas-container">
+                <canvas
+                    ref={canvasRef}
+                    width={bufferDimensions.width}
+                    height={bufferDimensions.height}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseEnter={handleMouseEnter}
+                    className="canvas"
+                />
+            </div>
         </div>
     );
 }

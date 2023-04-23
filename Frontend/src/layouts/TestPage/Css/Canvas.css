@@ -6,6 +6,13 @@
     display: block;
 }
 
+.canvas-container * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .brush-size-indicator {
     position: absolute;
     pointer-events: none;

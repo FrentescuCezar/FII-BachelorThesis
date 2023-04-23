@@ -34,6 +34,11 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
 
     const [canvasImage, setCanvasImage] = useState<ImageData | null>(null);
 
+    const brushSizeIndicatorRef = useRef<HTMLDivElement | null>(null);
+    const [showBrushSizeIndicator, setShowBrushSizeIndicator] = useState(false);
+
+
+
 
 
     const getMouseCoords = (event: React.MouseEvent<HTMLCanvasElement>): [number, number] => {
@@ -113,6 +118,8 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
 
 
     const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
+        updateBrushSizeIndicator(event);
+
         if (!context || !drawing) return;
         const [x, y] = getMouseCoords(event);
         context.lineTo(x, y);
@@ -122,6 +129,30 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
         context.globalCompositeOperation = tool === 'pen' ? 'source-over' : 'destination-out';
         context.stroke();
     };
+
+    const updateBrushSizeIndicator = (event: MouseEvent<HTMLCanvasElement>) => {
+        if (brushSizeIndicatorRef.current && showBrushSizeIndicator) {
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            brushSizeIndicatorRef.current.style.left = `${event.clientX + scrollX}px`;
+            brushSizeIndicatorRef.current.style.top = `${event.clientY + scrollY}px`;
+        }
+    };
+
+    const handleMouseLeave = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        handleMouseUp();
+        setShowBrushSizeIndicator(false);
+    };
+
+    useEffect(() => {
+        if (brushSizeIndicatorRef.current) {
+            brushSizeIndicatorRef.current.style.width = `${brushSize}px`;
+            brushSizeIndicatorRef.current.style.height = `${brushSize}px`;
+            brushSizeIndicatorRef.current.style.marginLeft = `-${brushSize / 2}px`;
+            brushSizeIndicatorRef.current.style.marginTop = `-${brushSize / 2}px`;
+        }
+    }, [brushSize]);
+
 
     const handleMouseUp = () => {
         if (!context) return;
@@ -175,17 +206,32 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
     }, [context]);
 
 
-    return (
-        <canvas
-            ref={canvasRef}
-            width={bufferDimensions.width}
-            height={bufferDimensions.height}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            className="canvas"
-        />
-    );
-};
 
+
+    return (
+        <div>
+            <div
+                ref={brushSizeIndicatorRef}
+                className="brush-size-indicator"
+                style={{
+                    display: showBrushSizeIndicator ? 'block' : 'none',
+                    width: `${brushSize}px`,
+                    height: `${brushSize}px`,
+                    marginLeft: `-${brushSize / 2}px`,
+                    marginTop: `-${brushSize / 2}px`,
+                }}
+            />
+            <canvas
+                ref={canvasRef}
+                width={bufferDimensions.width}
+                height={bufferDimensions.height}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setShowBrushSizeIndicator(true)}
+                className="canvas"
+            />
+        </div>
+    );
+}
 export default CanvasStable;

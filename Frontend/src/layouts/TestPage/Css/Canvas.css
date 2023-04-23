@@ -5,3 +5,11 @@
     height: 50%;
     display: block;
 }
+
+.brush-size-indicator {
+    position: absolute;
+    pointer-events: none;
+    border: 1px solid black;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0);
+}

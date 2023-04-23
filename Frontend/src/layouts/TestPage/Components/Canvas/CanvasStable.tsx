@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, MouseEvent } from 'react';
 
-import '../Css/Canvas.css';
+import './Css/Canvas.css';
 
 const MAX_HISTORY_SIZE = 100;
 

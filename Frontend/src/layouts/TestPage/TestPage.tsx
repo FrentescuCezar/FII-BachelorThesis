@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import CanvasStable from './Components/CanvasStable';
-import Toolbar from './Components/ToolbarStable';
+import CanvasStable from './Components/Canvas/CanvasStable';
+import Toolbar from './Components/Canvas/ToolbarStable';
+import { Layer, Stage } from 'react-konva';
+import Stickman from './Components/Stickman/Stickman';
 
 const PaintPage: React.FC = () => {
     const [color, setColor] = useState('#000000');
@@ -14,6 +16,12 @@ const PaintPage: React.FC = () => {
     const [historyIndex, setHistoryIndex] = useState(0);
 
     const MAX_HISTORY_SIZE = 100;
+
+    const [stickmen, setStickmen] = useState<{ x: number; y: number }[]>([]);
+
+    const addStickman = () => {
+        setStickmen([...stickmen, { x: window.innerWidth / 2, y: window.innerHeight / 2 }]);
+    };
 
 
     const undo = () => {
@@ -82,6 +90,31 @@ const PaintPage: React.FC = () => {
                 setContext={setContext}
                 bufferDimensions={bufferDimensions}
             />
+
+            <div>
+                <button onClick={addStickman}>Add</button>
+                <Stage width={window.innerWidth} height={window.innerHeight}>
+                    <Layer>
+                        <rect
+                            x={0}
+                            y={0}
+                            width={window.innerWidth}
+                            height={window.innerHeight}
+                            fill="black"
+                            onClick={addStickman}
+                        />
+                        {stickmen.map((stickman, index) => (
+                            <Stickman
+                                key={index}
+                                x={stickman.x}
+                                y={stickman.y}
+                                draggable
+                            />
+                        ))}
+                    </Layer>
+                </Stage>
+            </div>
+
         </div>
     );
 }

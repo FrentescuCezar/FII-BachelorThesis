@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import Stickman from './Components/Stickman/Stickman';
 import StickmanTransformer from './Components/Stickman/StickmanTransformer';
@@ -8,7 +8,9 @@ const PaintPage: React.FC = () => {
     const [stickmen, setStickmen] = useState<{ id: number; x: number; y: number }[]>([]);
     const [uniqueIdCounter, setUniqueIdCounter] = useState<number>(0);
 
-
+    {/* BUTTONS */ }
+    const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
+    const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
     const addStickman = () => {
         setStickmen([...stickmen, { id: uniqueIdCounter, x: 256, y: 256 - 120 }]);
         setUniqueIdCounter(uniqueIdCounter + 1);
@@ -56,8 +58,16 @@ const PaintPage: React.FC = () => {
         }
     };
 
-    const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
-    const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
+
+    const stageRef = useRef<Konva.Stage>(null);
+    const getBase64Image = () => {
+        if (stageRef.current) {
+            const base64Image = stageRef.current.toDataURL();
+            console.log(base64Image);
+            // You can now use the base64Image in your JSON payload or for any other purpose
+        }
+    };
+
 
 
     return (
@@ -67,7 +77,8 @@ const PaintPage: React.FC = () => {
                 <button onClick={removeStickman}>Remove</button>
                 <button onClick={bringForward}>Bring forward</button>
                 <button onClick={bringBackward}>Bring backward</button>
-                <Stage width={512} height={512}>
+                <button onClick={getBase64Image}>Save Image base64</button>
+                <Stage ref={stageRef} width={512} height={512}>
                     <Layer>
                         <Rect width={512} height={512} fill="black" onMouseDown={(e) => setSelectedNode(null)} />
                         {stickmen.map((stickman, index) => (

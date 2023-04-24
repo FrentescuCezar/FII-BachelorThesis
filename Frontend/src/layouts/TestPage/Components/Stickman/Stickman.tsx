@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import Konva from 'konva';
+import React, { useRef, useState } from 'react';
 import { Group, Line, Circle, Ellipse } from 'react-konva';
 
 interface StickmanProps {
     x: number;
     y: number;
     draggable: boolean;
+    onSelect: (node: Konva.Node | null) => void;
+
 }
 
-const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
+const Stickman: React.FC<StickmanProps> = ({ x, y, draggable, onSelect }) => {
     const colors = {
         head: 'rgba(255, 0, 0, 0.6)',
         torso: 'rgba(0, 0, 255, 0.6)',
@@ -45,11 +48,24 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
         { x: 20, y: 110 } // right hip
     ]);
 
+    const stickmanGroupRef = useRef<Konva.Group>(null);
+
     const handleJointDrag = (index: number, x: number, y: number) => {
+        if (stickmanGroupRef.current) {
+            onSelect(null);
+        }
         const newJoints = [...joints];
         newJoints[index] = { x, y };
         setJoints(newJoints);
     };
+
+    const handleClick = (e: any) => {
+        if (stickmanGroupRef.current) {
+            onSelect(stickmanGroupRef.current);
+        }
+        e.cancelBubble = true;
+    };
+
 
     const renderEllipse = (startJoint: number, endJoint: number, color: string) => {
         const startX = joints[startJoint].x;
@@ -70,7 +86,7 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
     };
 
     return (
-        <Group x={x} y={y} draggable={draggable}>
+        <Group ref={stickmanGroupRef} x={x} y={y} draggable={draggable} onClick={handleClick}>
             {/* Head */}
             <Circle radius={20} fill={colors.head} x={joints[0].x} y={joints[0].y - 20} />
 
@@ -118,6 +134,9 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
                                                         colors.leftHipChest
                     }
                     draggable
+                    onClick={(e) => {
+                        e.cancelBubble = true;
+                    }}
                     onDragMove={(e) => handleJointDrag(index, e.target.x(), e.target.y())}
                 />
             ))}

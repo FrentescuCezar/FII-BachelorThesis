@@ -17,13 +17,6 @@ const PaintPage: React.FC = () => {
 
     const MAX_HISTORY_SIZE = 100;
 
-    const [stickmen, setStickmen] = useState<{ x: number; y: number }[]>([])
-    const scaleFactor = Math.min(window.innerWidth / 512, window.innerHeight / 512);
-    ;
-
-    const addStickman = () => {
-        setStickmen([...stickmen, { x: 256 - 80, y: 256 - 190 }]);
-    };
 
     const undo = () => {
         if (historyIndex <= 0 || !context) return;
@@ -38,8 +31,6 @@ const PaintPage: React.FC = () => {
         setHistoryIndex((prevIndex) => prevIndex + 1);
         context.putImageData(history[historyIndex + 1], 0, 0);
     };
-
-
 
     const saveCanvasState = () => {
         if (!context) return;
@@ -66,6 +57,13 @@ const PaintPage: React.FC = () => {
     };
 
 
+    const [stickmen, setStickmen] = useState<{ x: number; y: number }[]>([])
+    const scaleFactor = Math.min(window.innerWidth / 512, window.innerHeight / 512);
+    ;
+
+    const addStickman = () => {
+        setStickmen([...stickmen, { x: 256 - 80, y: 256 - 190 }]);
+    };
 
 
     return (

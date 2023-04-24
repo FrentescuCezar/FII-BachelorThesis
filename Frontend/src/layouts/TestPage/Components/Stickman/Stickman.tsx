@@ -9,22 +9,22 @@ interface StickmanProps {
 
 const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
     const colors = {
-        head: 'rgba(255, 0, 0, 0.8)',
-        torso: 'rgba(0, 0, 255, 0.8)',
-        arms: 'rgba(0, 128, 0, 0.8)',
-        legs: 'rgba(128, 0, 128, 0.8)',
-        rightHipChest: 'rgba(0, 179, 0, 0.8)',
-        rightKneeHip: 'rgba(0, 179, 60, 0.8)',
-        rightFootKnee: 'rgba(0, 179, 119, 0.8)',
-        leftHipChest: 'rgba(0, 179, 179, 0.8)',
-        leftKneeHip: 'rgba(0, 119, 179, 0.8)',
-        leftFootKnee: 'rgba(0, 60, 179, 0.8)',
-        chestLeftShoulder: 'rgba(179, 60, 0, 0.8)',
-        chestRightShoulder: 'rgba(179, 0, 0, 0.8)',
-        rightShoulderElbow: 'rgba(179, 119, 0, 0.8)',
-        rightElbowHand: 'rgba(179, 179, 0, 0.8)',
-        leftShoulderElbow: 'rgba(119, 179, 0, 0.8)',
-        leftElbowHand: 'rgba(60, 179, 0, 0.8)',
+        head: 'rgba(255, 0, 0, 0.6)',
+        torso: 'rgba(0, 0, 255, 0.6)',
+        arms: 'rgba(0, 128, 0, 0.6)',
+        legs: 'rgba(128, 0, 128, 0.6)',
+        rightHipChest: 'rgba(0, 179, 0, 0.6)',
+        rightKneeHip: 'rgba(0, 179, 60, 0.6)',
+        rightFootKnee: 'rgba(0, 179, 119, 0.6)',
+        leftHipChest: 'rgba(0, 179, 179, 0.6)',
+        leftKneeHip: 'rgba(0, 119, 179, 0.6)',
+        leftFootKnee: 'rgba(0, 60, 179, 0.6)',
+        chestLeftShoulder: 'rgba(179, 60, 0, 0.6)',
+        chestRightShoulder: 'rgba(179, 0, 0, 0.6)',
+        rightShoulderElbow: 'rgba(179, 119, 0, 0.6)',
+        rightElbowHand: 'rgba(179, 179, 0, 0.6)',
+        leftShoulderElbow: 'rgba(170, 255, 0, 0.6)',
+        leftElbowHand: 'rgba(115, 252, 47, 0.6)',
     };
 
 
@@ -51,134 +51,55 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
         setJoints(newJoints);
     };
 
+    const renderEllipse = (startJoint: number, endJoint: number, color: string) => {
+        const startX = joints[startJoint].x;
+        const startY = joints[startJoint].y;
+        const endX = joints[endJoint].x;
+        const endY = joints[endJoint].y;
+
+        return (
+            <Ellipse
+                x={startX + (endX - startX) / 2}
+                y={startY + (endY - startY) / 2}
+                radiusX={Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)) / 2}
+                radiusY={3.5}
+                fill={color}
+                rotation={Math.atan2(endY - startY, endX - startX) * (180 / Math.PI)}
+            />
+        );
+    };
+
     return (
         <Group x={x} y={y} draggable={draggable}>
             {/* Head */}
             <Circle radius={20} fill={colors.head} x={joints[0].x} y={joints[0].y - 20} />
 
             {/* Neck */}
-            <Ellipse
-                x={joints[0].x + (joints[11].x - joints[0].x) / 2} // horizontal center of the ellipse
-                y={joints[0].y + (joints[11].y - joints[0].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[11].x - joints[0].x, 2) + Math.pow(joints[11].y - joints[0].y, 2)) / 2} // half the horizontal distance between joints 0 and 11
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.head} // same color as the original stroke
-                rotation={Math.atan2(joints[11].y - joints[0].y, joints[11].x - joints[0].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 0 and 11
-            />
-
+            {renderEllipse(0, 11, colors.head)}
 
             {/* Torso */}
-            <Ellipse
-                x={joints[1].x + (joints[11].x - joints[1].x) / 2} // horizontal center of the ellipse
-                y={joints[1].y + (joints[11].y - joints[1].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[11].x - joints[1].x, 2) + Math.pow(joints[11].y - joints[1].y, 2)) / 2} // half the horizontal distance between joints 1 and 11
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.chestRightShoulder} // same color as the original stroke
-                rotation={Math.atan2(joints[11].y - joints[1].y, joints[11].x - joints[1].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 1 and 11
-            />
-            <Ellipse
-                x={joints[2].x + (joints[11].x - joints[2].x) / 2} // horizontal center of the ellipse
-                y={joints[2].y + (joints[11].y - joints[2].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[11].x - joints[2].x, 2) + Math.pow(joints[11].y - joints[2].y, 2)) / 2} // half the horizontal distance between joints 2 and 11
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.chestLeftShoulder} // same color as the original stroke
-                rotation={Math.atan2(joints[11].y - joints[2].y, joints[11].x - joints[2].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 2 and 11
-            />
-
+            {renderEllipse(1, 11, colors.chestRightShoulder)}
+            {renderEllipse(2, 11, colors.chestLeftShoulder)}
 
             {/* Right Arm */}
-            <Ellipse
-                x={joints[1].x + (joints[3].x - joints[1].x) / 2}
-                y={joints[1].y + (joints[3].y - joints[1].y) / 2}
-                radiusX={Math.sqrt(Math.pow(joints[3].x - joints[1].x, 2) + Math.pow(joints[3].y - joints[1].y, 2)) / 2}
-                radiusY={3.5}
-                fill={colors.rightShoulderElbow}
-                rotation={Math.atan2(joints[3].y - joints[1].y, joints[3].x - joints[1].x) * (180 / Math.PI)}
-            />
-            <Ellipse
-                x={joints[3].x + (joints[5].x - joints[3].x) / 2}
-                y={joints[3].y + (joints[5].y - joints[3].y) / 2}
-                radiusX={Math.sqrt(Math.pow(joints[5].x - joints[3].x, 2) + Math.pow(joints[5].y - joints[3].y, 2)) / 2}
-                radiusY={3.5}
-                fill={colors.rightElbowHand}
-                rotation={Math.atan2(joints[5].y - joints[3].y, joints[5].x - joints[3].x) * (180 / Math.PI)}
-            />
+            {renderEllipse(1, 3, colors.rightShoulderElbow)}
+            {renderEllipse(3, 5, colors.rightElbowHand)}
 
             {/* Left Arm */}
-            <Ellipse
-                x={joints[2].x + (joints[4].x - joints[2].x) / 2}
-                y={joints[2].y + (joints[4].y - joints[2].y) / 2}
-                radiusX={Math.sqrt(Math.pow(joints[4].x - joints[2].x, 2) + Math.pow(joints[4].y - joints[2].y, 2)) / 2}
-                radiusY={3.5}
-                fill={colors.leftShoulderElbow}
-                rotation={Math.atan2(joints[4].y - joints[2].y, joints[4].x - joints[2].x) * (180 / Math.PI)}
-            />
-            <Ellipse
-                x={joints[4].x + (joints[6].x - joints[4].x) / 2}
-                y={joints[4].y + (joints[6].y - joints[4].y) / 2}
-                radiusX={Math.sqrt(Math.pow(joints[6].x - joints[4].x, 2) + Math.pow(joints[6].y - joints[4].y, 2)) / 2}
-                radiusY={3.5}
-                fill={colors.leftElbowHand}
-                rotation={Math.atan2(joints[6].y - joints[4].y, joints[6].x - joints[4].x) * (180 / Math.PI)}
-            />
+            {renderEllipse(2, 4, colors.leftShoulderElbow)}
+            {renderEllipse(4, 6, colors.leftElbowHand)}
 
             {/* Right Leg */}
-            <Ellipse
-                x={joints[11].x + (joints[12].x - joints[11].x) / 2} // horizontal center of the ellipse
-                y={joints[11].y + (joints[12].y - joints[11].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[12].x - joints[11].x, 2) + Math.pow(joints[12].y - joints[11].y, 2)) / 2} // half the horizontal distance between joints 11 and 12
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.rightHipChest} // same color as the original stroke
-                rotation={Math.atan2(joints[12].y - joints[11].y, joints[12].x - joints[11].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 11 and 12
-            />
-
-            <Ellipse
-                x={joints[12].x + (joints[7].x - joints[12].x) / 2} // horizontal center of the ellipse
-                y={joints[12].y + (joints[7].y - joints[12].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[7].x - joints[12].x, 2) + Math.pow(joints[7].y - joints[12].y, 2)) / 2} // half the horizontal distance between joints 12 and 7
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.rightKneeHip} // same color as the original stroke
-                rotation={Math.atan2(joints[7].y - joints[12].y, joints[7].x - joints[12].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 12 and 7
-            />
-
-            <Ellipse
-                x={joints[7].x + (joints[9].x - joints[7].x) / 2} // horizontal center of the ellipse
-                y={joints[7].y + (joints[9].y - joints[7].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[9].x - joints[7].x, 2) + Math.pow(joints[9].y - joints[7].y, 2)) / 2} // half the horizontal distance between joints 7 and 9
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.rightFootKnee} // same color as the original stroke
-                rotation={Math.atan2(joints[9].y - joints[7].y, joints[9].x - joints[7].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 7 and 9
-            />
-
-
+            {renderEllipse(11, 12, colors.rightHipChest)}
+            {renderEllipse(12, 7, colors.rightKneeHip)}
+            {renderEllipse(7, 9, colors.rightFootKnee)}
 
             {/* Left Leg */}
-            <Ellipse
-                x={joints[11].x + (joints[13].x - joints[11].x) / 2} // horizontal center of the ellipse
-                y={joints[11].y + (joints[13].y - joints[11].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[13].x - joints[11].x, 2) + Math.pow(joints[13].y - joints[11].y, 2)) / 2} // half the horizontal distance between joints 11 and 13
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.leftHipChest} // same color as the original stroke
-                rotation={Math.atan2(joints[13].y - joints[11].y, joints[13].x - joints[11].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 11 and 13
-            />
-            <Ellipse
-                x={joints[13].x + (joints[8].x - joints[13].x) / 2} // horizontal center of the ellipse
-                y={joints[13].y + (joints[8].y - joints[13].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[8].x - joints[13].x, 2) + Math.pow(joints[8].y - joints[13].y, 2)) / 2} // half the horizontal distance between joints 13 and 8
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.leftKneeHip} // same color as the original stroke
-                rotation={Math.atan2(joints[8].y - joints[13].y, joints[8].x - joints[13].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 13 and 8
-            />
-            <Ellipse
-                x={joints[8].x + (joints[10].x - joints[8].x) / 2} // horizontal center of the ellipse
-                y={joints[8].y + (joints[10].y - joints[8].y) / 2} // vertical center of the ellipse
-                radiusX={Math.sqrt(Math.pow(joints[10].x - joints[8].x, 2) + Math.pow(joints[10].y - joints[8].y, 2)) / 2} // half the horizontal distance between joints 8 and 10
-                radiusY={3.5} // fixed vertical radius
-                fill={colors.leftFootKnee} // same color as the original stroke
-                rotation={Math.atan2(joints[10].y - joints[8].y, joints[10].x - joints[8].x) * (180 / Math.PI)} // angle between the horizontal axis and the line connecting joints 8 and 10
-            />
+            {renderEllipse(11, 13, colors.leftHipChest)}
+            {renderEllipse(13, 8, colors.leftKneeHip)}
+            {renderEllipse(8, 10, colors.leftFootKnee)}
 
-            {/* Joints */}
+            {/* Joint Draggable Circles */}
             {joints.map((joint, index) => (
                 <Circle
                     key={index}
@@ -202,7 +123,6 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable }) => {
             ))}
         </Group>
     );
-
 };
 
 export default Stickman;

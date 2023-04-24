@@ -3,14 +3,14 @@ import React, { useRef, useState } from 'react';
 import { Group, Line, Circle, Ellipse } from 'react-konva';
 
 interface StickmanProps {
+    id: number;
     x: number;
     y: number;
     draggable: boolean;
-    onSelect: (node: Konva.Node | null) => void;
-
+    onSelect: (node: Konva.Node | null, id: number | null) => void;
 }
 
-const Stickman: React.FC<StickmanProps> = ({ x, y, draggable, onSelect }) => {
+const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect }) => {
     const colors = {
         head: 'rgba(255, 0, 0, 0.6)',
         torso: 'rgba(0, 0, 255, 0.6)',
@@ -52,7 +52,7 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable, onSelect }) => {
 
     const handleJointDrag = (index: number, x: number, y: number) => {
         if (stickmanGroupRef.current) {
-            onSelect(null);
+            onSelect(null, id);
         }
         const newJoints = [...joints];
         newJoints[index] = { x, y };
@@ -61,7 +61,7 @@ const Stickman: React.FC<StickmanProps> = ({ x, y, draggable, onSelect }) => {
 
     const handleClick = (e: any) => {
         if (stickmanGroupRef.current) {
-            onSelect(stickmanGroupRef.current);
+            onSelect(stickmanGroupRef.current, id);
         }
         e.cancelBubble = true;
     };

@@ -27,6 +27,35 @@ const PaintPage: React.FC = () => {
         }
     };
 
+    const bringForward = () => {
+        if (selectedNode) {
+            const group = selectedNode as Konva.Group;
+            const parent = group.getParent();
+            const children = parent.getChildren();
+            const backgroundIndex = children.indexOf(parent.findOne("Rect"));
+
+            const maxZIndex = children.length - 2; // Exclude the background and the transformer
+
+            if (group.getZIndex() > backgroundIndex && group.getZIndex() < maxZIndex) {
+                group.moveUp();
+                group.getLayer()?.batchDraw();
+            }
+        }
+    };
+
+    const bringBackward = () => {
+        if (selectedNode) {
+            const group = selectedNode as Konva.Group;
+            const parent = group.getParent();
+            const backgroundIndex = parent.getChildren().indexOf(parent.findOne("Rect"));
+
+            if (group.getZIndex() > backgroundIndex + 1) {
+                group.moveDown();
+                group.getLayer()?.batchDraw();
+            }
+        }
+    };
+
     const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
     const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
 
@@ -36,6 +65,8 @@ const PaintPage: React.FC = () => {
             <div>
                 <button onClick={addStickman}>Add</button>
                 <button onClick={removeStickman}>Remove</button>
+                <button onClick={bringForward}>Bring forward</button>
+                <button onClick={bringBackward}>Bring backward</button>
                 <Stage width={512} height={512}>
                     <Layer>
                         <Rect width={512} height={512} fill="black" onMouseDown={(e) => setSelectedNode(null)} />

@@ -83,12 +83,23 @@ export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>) => {
 };
 
 
-const saveToLocalStorage = (key: string, value: any) => {
-    localStorage.setItem(key, JSON.stringify(value));
+export const handleJointsUpdate = (
+    id: number,
+    joints: Array<{ x: number; y: number }>,
+    stickmen: {
+        id: number;
+        x: number;
+        y: number;
+        joints: Array<{ x: number; y: number }>;
+    }[],
+    setStickmen: Function
+) => {
+    setStickmen(
+        stickmen.map((stickman) => {
+            if (stickman.id === id) {
+                return { ...stickman, joints };
+            }
+            return stickman;
+        })
+    );
 };
-
-const loadFromLocalStorage = (key: string) => {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-};
-

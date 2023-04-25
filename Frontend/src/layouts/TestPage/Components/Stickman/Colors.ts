@@ -1,0 +1,18 @@
+export const colors = {
+    head: 'rgba(255, 0, 0, 0.7)',
+    torso: 'rgba(0, 0, 255, 0.7)',
+    arms: 'rgba(0, 128, 0, 0.7)',
+    legs: 'rgba(128, 0, 128, 0.7)',
+    rightHipChest: 'rgba(0, 179, 0, 0.7)',
+    rightKneeHip: 'rgba(0, 179, 60, 0.7)',
+    rightFootKnee: 'rgba(0, 179, 119, 0.7)',
+    leftHipChest: 'rgba(0, 179, 179, 0.7)',
+    leftKneeHip: 'rgba(0, 119, 179, 0.7)',
+    leftFootKnee: 'rgba(0, 60, 179, 0.7)',
+    chestLeftShoulder: 'rgba(179, 60, 0, 0.7)',
+    chestRightShoulder: 'rgba(179, 0, 0, 0.7)',
+    rightShoulderElbow: 'rgba(179, 119, 0, 0.7)',
+    rightElbowHand: 'rgba(255, 255, 0, 0.8)',
+    leftShoulderElbow: 'rgba(170, 255, 0, 0.7)',
+    leftElbowHand: 'rgba(115, 252, 47, 0.7)',
+};

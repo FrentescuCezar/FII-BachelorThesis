@@ -10,7 +10,7 @@ import {
     bringForward,
     bringBackward,
     getBase64Image,
-
+    handleJointsUpdate
 } from './Utils/StickmanPageFunctions';
 
 const PaintPage: React.FC = () => {
@@ -30,15 +30,6 @@ const PaintPage: React.FC = () => {
 
     const stageRef = useRef<Konva.Stage>(null);
 
-
-    const handleJointsUpdate = (id: number, joints: Array<{ x: number; y: number }>) => {
-        setStickmen(stickmen.map(stickman => {
-            if (stickman.id === id) {
-                return { ...stickman, joints };
-            }
-            return stickman;
-        }));
-    };
 
     return (
         <div>
@@ -64,7 +55,9 @@ const PaintPage: React.FC = () => {
                                     setSelectedNodeId(id);
                                 }}
                                 joints={stickman.joints}
-                                onJointsUpdate={handleJointsUpdate}
+                                onJointsUpdate={(id, joints) =>
+                                    handleJointsUpdate(stickman.id, joints, stickmen, setStickmen)
+                                }
                             />
                         ))}
                         <StickmanTransformer selectedNode={selectedNode} />

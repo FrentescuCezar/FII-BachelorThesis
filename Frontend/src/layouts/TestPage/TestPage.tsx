@@ -10,8 +10,8 @@ import {
     bringForward,
     bringBackward,
     getBase64Image,
-    handleJointsUpdate
-} from './Utils/StickmanPageFunctions';
+    handleJointsUpdate,
+} from './Utils/TestPageStickmanFunctions';
 
 const PaintPage: React.FC = () => {
     const [stickmen, setStickmen] = useState<{

@@ -77,6 +77,7 @@ export const bringBackward = (selectedNode: Konva.Node | null) => {
 export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>) => {
     if (stageRef.current) {
         const base64Image = stageRef.current.toDataURL();
+
         console.log(base64Image);
         // You can now use the base64Image in your JSON payload or for any other purpose
     }
@@ -103,3 +104,5 @@ export const handleJointsUpdate = (
         })
     );
 };
+
+

@@ -4,80 +4,50 @@ import Stickman from './Components/Stickman/Stickman';
 import StickmanTransformer from './Components/Stickman/StickmanTransformer';
 import Konva from 'konva';
 
+import {
+    addStickman,
+    removeStickman,
+    bringForward,
+    bringBackward,
+    getBase64Image,
+
+} from './Utils/StickmanPageFunctions';
+
 const PaintPage: React.FC = () => {
-    const [stickmen, setStickmen] = useState<{ id: number; x: number; y: number }[]>([]);
+    const [stickmen, setStickmen] = useState<{
+        id: number;
+        x: number;
+        y: number;
+        joints: Array<{ x: number; y: number }>;
+
+    }[]>([]);
+
     const [uniqueIdCounter, setUniqueIdCounter] = useState<number>(0);
 
     {/* BUTTONS */ }
     const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
     const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
-    const addStickman = () => {
-        setStickmen([...stickmen, { id: uniqueIdCounter, x: 256, y: 256 - 120 }]);
-        setUniqueIdCounter(uniqueIdCounter + 1);
-    };
-
-    const removeStickman = () => {
-        if (stickmen.length == 1) {
-            setUniqueIdCounter(0);
-        }
-
-        if (selectedNode && selectedNodeId !== null) {
-            const newStickmen = stickmen.filter((stickman) => stickman.id !== selectedNodeId);
-            setStickmen(newStickmen);
-            setSelectedNode(null);
-            setSelectedNodeId(null);
-        }
-    };
-
-    const bringForward = () => {
-        if (selectedNode) {
-            const group = selectedNode as Konva.Group;
-            const parent = group.getParent();
-            const children = parent.getChildren();
-            const backgroundIndex = children.indexOf(parent.findOne("Rect"));
-
-            const maxZIndex = children.length - 2; // Exclude the background and the transformer
-
-            if (group.getZIndex() > backgroundIndex && group.getZIndex() < maxZIndex) {
-                group.moveUp();
-                group.getLayer()?.batchDraw();
-            }
-        }
-    };
-
-    const bringBackward = () => {
-        if (selectedNode) {
-            const group = selectedNode as Konva.Group;
-            const parent = group.getParent();
-            const backgroundIndex = parent.getChildren().indexOf(parent.findOne("Rect"));
-
-            if (group.getZIndex() > backgroundIndex + 1) {
-                group.moveDown();
-                group.getLayer()?.batchDraw();
-            }
-        }
-    };
-
 
     const stageRef = useRef<Konva.Stage>(null);
-    const getBase64Image = () => {
-        if (stageRef.current) {
-            const base64Image = stageRef.current.toDataURL();
-            console.log(base64Image);
-            // You can now use the base64Image in your JSON payload or for any other purpose
-        }
+
+
+    const handleJointsUpdate = (id: number, joints: Array<{ x: number; y: number }>) => {
+        setStickmen(stickmen.map(stickman => {
+            if (stickman.id === id) {
+                return { ...stickman, joints };
+            }
+            return stickman;
+        }));
     };
-
-
 
     return (
         <div>
             <div>
-                <button onClick={addStickman}>Add</button>
-                <button onClick={removeStickman}>Remove</button>
-                <button onClick={bringForward}>Bring forward</button>
-                <button onClick={bringBackward}>Bring backward</button>
-                <button onClick={getBase64Image}>Save Image base64</button>
+                <button onClick={() => addStickman(stickmen, setStickmen, uniqueIdCounter, setUniqueIdCounter)}>Add</button>
+                <button onClick={() => removeStickman(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId)}>Remove</button>
+                <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
+                <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
+                <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>
                         <Rect width={512} height={512} fill="black" onMouseDown={(e) => setSelectedNode(null)} />
@@ -87,11 +57,14 @@ const PaintPage: React.FC = () => {
                                 id={stickman.id}
                                 x={stickman.x}
                                 y={stickman.y}
+
                                 draggable
                                 onSelect={(node, id) => {
                                     setSelectedNode(node);
                                     setSelectedNodeId(id);
                                 }}
+                                joints={stickman.joints}
+                                onJointsUpdate={handleJointsUpdate}
                             />
                         ))}
                         <StickmanTransformer selectedNode={selectedNode} />

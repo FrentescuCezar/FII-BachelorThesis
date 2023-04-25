@@ -8,55 +8,43 @@ interface StickmanProps {
     y: number;
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
+    joints: Array<{ x: number; y: number }>;
+    onJointsUpdate: (id: number, joints: Array<{ x: number; y: number }>) => void;
 }
 
-const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect }) => {
+const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate }) => {
     const colors = {
-        head: 'rgba(255, 0, 0, 0.6)',
-        torso: 'rgba(0, 0, 255, 0.6)',
-        arms: 'rgba(0, 128, 0, 0.6)',
-        legs: 'rgba(128, 0, 128, 0.6)',
-        rightHipChest: 'rgba(0, 179, 0, 0.6)',
-        rightKneeHip: 'rgba(0, 179, 60, 0.6)',
-        rightFootKnee: 'rgba(0, 179, 119, 0.6)',
-        leftHipChest: 'rgba(0, 179, 179, 0.6)',
-        leftKneeHip: 'rgba(0, 119, 179, 0.6)',
-        leftFootKnee: 'rgba(0, 60, 179, 0.6)',
-        chestLeftShoulder: 'rgba(179, 60, 0, 0.6)',
-        chestRightShoulder: 'rgba(179, 0, 0, 0.6)',
-        rightShoulderElbow: 'rgba(179, 119, 0, 0.6)',
-        rightElbowHand: 'rgba(179, 179, 0, 0.6)',
-        leftShoulderElbow: 'rgba(170, 255, 0, 0.6)',
-        leftElbowHand: 'rgba(115, 252, 47, 0.6)',
+        head: 'rgba(255, 0, 0, 0.7)',
+        torso: 'rgba(0, 0, 255, 0.7)',
+        arms: 'rgba(0, 128, 0, 0.7)',
+        legs: 'rgba(128, 0, 128, 0.7)',
+        rightHipChest: 'rgba(0, 179, 0, 0.7)',
+        rightKneeHip: 'rgba(0, 179, 60, 0.7)',
+        rightFootKnee: 'rgba(0, 179, 119, 0.7)',
+        leftHipChest: 'rgba(0, 179, 179, 0.7)',
+        leftKneeHip: 'rgba(0, 119, 179, 0.7)',
+        leftFootKnee: 'rgba(0, 60, 179, 0.7)',
+        chestLeftShoulder: 'rgba(179, 60, 0, 0.7)',
+        chestRightShoulder: 'rgba(179, 0, 0, 0.7)',
+        rightShoulderElbow: 'rgba(179, 119, 0, 0.7)',
+        rightElbowHand: 'rgba(255, 255, 0, 0.8)',
+        leftShoulderElbow: 'rgba(170, 255, 0, 0.7)',
+        leftElbowHand: 'rgba(115, 252, 47, 0.7)',
     };
 
 
-    const [joints, setJoints] = useState([
-        { x: 0, y: 0 }, // neck
-        { x: -40, y: 20 }, // left shoulder
-        { x: 40, y: 20 }, // right shoulder
-        { x: -60, y: 80 }, // left elbow
-        { x: 60, y: 80 }, // right elbow
-        { x: -70, y: 140 }, // left hand
-        { x: 70, y: 140 }, // right hand
-        { x: -40, y: 190 }, // left knee
-        { x: 40, y: 190 }, // right knee
-        { x: -50, y: 260 }, // left foot
-        { x: 50, y: 260 }, // right foot
-        { x: 0, y: 20 }, // chest
-        { x: -20, y: 110 }, // left hip
-        { x: 20, y: 110 } // right hip
-    ]);
-
     const stickmanGroupRef = useRef<Konva.Group>(null);
+    const [localJoints, setLocalJoints] = useState<Array<{ x: number; y: number }>>(joints);
+
 
     const handleJointDrag = (index: number, x: number, y: number) => {
         if (stickmanGroupRef.current) {
             onSelect(null, id);
         }
-        const newJoints = [...joints];
+        const newJoints = [...localJoints];
         newJoints[index] = { x, y };
-        setJoints(newJoints);
+        setLocalJoints(newJoints);
+        onJointsUpdate(id, newJoints);
     };
 
     const handleClick = (e: any) => {
@@ -126,6 +114,7 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect }) =>
             draggable={draggable}
             onClick={handleClick}
             dragBoundFunc={dragBound}
+            name="Stickman" // For the save positions
         >
             {/* Head */}
             <Circle radius={20} fill={colors.head} x={joints[0].x} y={joints[0].y - 20} />

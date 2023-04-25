@@ -85,8 +85,48 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect }) =>
         );
     };
 
+
+    const dragBound = (pos: { x: number; y: number }): { x: number; y: number } => {
+        const stageWidth = 512;
+        const stageHeight = 512;
+
+        if (!stickmanGroupRef.current?.parent) {
+            return pos;
+        }
+
+        const stickman = stickmanGroupRef.current?.getClientRect({ relativeTo: stickmanGroupRef.current.parent });
+
+        if (!stickman) {
+            return pos;
+        }
+
+        const minX = -stickman.width + 10;
+        const minY = -stickman.height + 5;
+        const maxX = stageWidth + 50;
+        const maxY = stageHeight + 50;
+
+        const newX = Math.max(minX, Math.min(maxX, pos.x));
+        const newY = Math.max(minY, Math.min(maxY, pos.y));
+
+        // Check if the cursor is out of bounds
+        if (pos.x < minX || pos.x > maxX || pos.y < minY || pos.y > maxY) {
+            return { x: newX, y: newY };
+        }
+
+        return pos;
+    }
+
+
+
     return (
-        <Group ref={stickmanGroupRef} x={x} y={y} draggable={draggable} onClick={handleClick}>
+        <Group
+            ref={stickmanGroupRef}
+            x={x}
+            y={y}
+            draggable={draggable}
+            onClick={handleClick}
+            dragBoundFunc={dragBound}
+        >
             {/* Head */}
             <Circle radius={20} fill={colors.head} x={joints[0].x} y={joints[0].y - 20} />
 

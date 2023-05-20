@@ -13,6 +13,7 @@ import {
     getBase64Image,
     handleJointsUpdate,
 } from './Utils/TestPageStickmanFunctions';
+import ImageWithTransformer from './Image/ImageWithTransformer';
 
 const PaintPage: React.FC = () => {
     const [stickmen, setStickmen] = useState<{
@@ -71,6 +72,32 @@ const PaintPage: React.FC = () => {
     };
 
 
+    const [images, setImages] = useState<{
+        id: number;
+        x: number;
+        y: number;
+        url: string;
+    }[]>([]);
+
+    const [nodeType, setNodeType] = useState<string | null>(null);
+
+
+    const addImage = (
+        images: { id: number; x: number; y: number; url: string; }[],
+        setImages: { (value: React.SetStateAction<{ id: number; x: number; y: number; url: string; }[]>): void; (arg0: any[]): void; },
+        uniqueIdCounter: number,
+        setUniqueIdCounter: { (value: React.SetStateAction<number>): void; (arg0: any): void; }
+    ) => {
+        const newImage = {
+            id: uniqueIdCounter,
+            x: Math.random() * 100,  // or wherever you want to place the image
+            y: Math.random() * 100,  // or wherever you want to place the image
+            url: 'https://i.imgur.com/fHyEMsl.jpg',  // the URL of the image
+        };
+
+        setImages([...images, newImage]);
+        setUniqueIdCounter(uniqueIdCounter + 1);
+    };
 
     return (
         <div>
@@ -82,6 +109,7 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
                 <button onClick={saveStickmen}>Save</button>
                 <button onClick={loadStickmen}>Load</button>
+                <button onClick={() => addImage(images, setImages, uniqueIdCounter, setUniqueIdCounter)}>Add Image</button>
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>
                         <Rect
@@ -104,6 +132,8 @@ const PaintPage: React.FC = () => {
                                 onSelect={(node, id) => {
                                     setSelectedNode(node);
                                     setSelectedNodeId(id);
+                                    setNodeType('stickman');  // Add this line in Stickman
+
                                 }}
                                 joints={stickman.joints}
                                 onJointsUpdate={(id, joints) =>
@@ -126,7 +156,32 @@ const PaintPage: React.FC = () => {
                                 }}
                             />
                         ))}
-                        <StickmanTransformer selectedNode={selectedNode} />
+                        {images.map((image, index) => (
+                            <ImageWithTransformer
+                                key={image.id}
+                                id={image.id}
+                                x={image.x}
+                                y={image.y}
+                                url={image.url}
+                                draggable
+                                onSelect={(node, id) => {
+                                    setSelectedNode(node);
+                                    setSelectedNodeId(id);
+                                    setNodeType('image');
+                                }}
+                                onDragEnd={(id, newX, newY) => {
+                                    const newImages = images.map(image => {
+                                        if (image.id === id) {
+                                            return { ...image, x: newX, y: newY };
+                                        }
+                                        return image;
+                                    });
+                                    setImages(newImages);
+                                }}
+                                isSelected={selectedNodeId === image.id && nodeType === 'image'} // add this line
+                            />
+                        ))}
+                        <StickmanTransformer selectedNode={selectedNode} nodeType={nodeType} />
                     </Layer>
                 </Stage>
             </div>

@@ -1,9 +1,9 @@
 import Konva from 'konva';
-import React, { useRef, useState } from 'react';
-import { Group, Circle, Ellipse } from 'react-konva';
+import React, { useRef } from 'react';
+import { Group, Circle } from 'react-konva';
 import { colors } from './Colors';
 
-import { handleJointDrag, renderEllipse, dragBound } from './Utils/StickmanFunctions'
+import { handleJointDrag, renderEllipse } from './Utils/StickmanFunctions'
 
 interface StickmanProps {
     id: number;
@@ -13,13 +13,17 @@ interface StickmanProps {
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     joints: Array<{ x: number; y: number }>;
     onJointsUpdate: (id: number, joints: Array<{ x: number; y: number }>) => void;
+    scaleX: number;  // Add these new props
+    scaleY: number;  // Add these new props
+    onDragEnd: (id: number, newX: number, newY: number) => void;  // Add this line
+    onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
+
+
 }
 
-const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate }) => {
+const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange }) => {
 
     const stickmanGroupRef = useRef<Konva.Group>(null);
-
-
 
     const handleClick = (e: any) => {
         if (stickmanGroupRef.current) {
@@ -29,17 +33,50 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, join
     };
 
 
-
-
     return (
         <Group
             ref={stickmanGroupRef}
             x={x}
             y={y}
+            scaleX={scaleX}  // Apply the scales
+            scaleY={scaleY}  // Apply the scales
             draggable={draggable}
             onClick={handleClick}
-            //dragBoundFunc={(pos) => dragBound(stickmanGroupRef, { x, y })}
-            name="Stickman" // For the save positions
+            onDragEnd={(e) => {
+                if (stickmanGroupRef.current) {
+                    const newX = stickmanGroupRef.current.x();
+                    const newY = stickmanGroupRef.current.y();
+
+                    const deltaX = newX - x;
+                    const deltaY = newY - y;
+
+                    const newJoints = joints.map(joint => ({
+                        x: joint.x + deltaX,
+                        y: joint.y + deltaY,
+                    }));
+
+                    onJointsUpdate(id, newJoints);
+
+                    onDragEnd(id, newX, newY);
+
+                    if (stickmanGroupRef.current) {
+                        const newScaleX = stickmanGroupRef.current.scaleX();
+                        const newScaleY = stickmanGroupRef.current.scaleY();
+                        onScaleChange(id, newScaleX, newScaleY);
+                    }
+                }
+            }}
+
+            onTransformEnd={() => {
+                if (stickmanGroupRef.current) {
+                    const newScaleX = stickmanGroupRef.current.scaleX();
+                    const newScaleY = stickmanGroupRef.current.scaleY();
+                    onScaleChange(id, newScaleX, newScaleY);
+                }
+            }}
+
+            name="Stickman"
+
         >
             {/* Head */}
             <Circle radius={20} fill={colors.head} x={joints[0].x} y={joints[0].y - 20} />

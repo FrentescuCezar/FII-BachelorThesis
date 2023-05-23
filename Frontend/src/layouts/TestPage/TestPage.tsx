@@ -3,15 +3,18 @@ import { Layer, Rect, Stage } from 'react-konva';
 import Stickman from './Components/Stickman/Stickman';
 import StickmanTransformer from './Components/Stickman/StickmanTransformer';
 import Konva from 'konva';
-import { useStickmanScales } from './StickmanScalesProvider';
+import { useStickmanScales } from './Utils/StickmanScalesProvider';
 
 import {
     addStickman,
     removeStickman,
     bringForward,
     bringBackward,
-    getBase64Image,
     handleJointsUpdate,
+    getBase64Image,
+    saveStickmen,
+    loadStickmen,
+    addImage
 } from './Utils/TestPageStickmanFunctions';
 import ImageWithTransformer from './Image/ImageWithTransformer';
 
@@ -30,46 +33,7 @@ const PaintPage: React.FC = () => {
     const stageRef = useRef<Konva.Stage>(null);
 
     const { stickmanScales, setStickmanScales } = useStickmanScales();
-
-    type StickmanScale = {
-        scaleX: number;
-        scaleY: number;
-    };
-
     const [stickmenJson, setStickmenJson] = useState<string>("");
-    const saveStickmen = () => {
-        const stickmenToSave = stickmen.map(stickman => ({
-            ...stickman,
-            scaleX: stickmanScales[stickman.id]?.scaleX || 1,
-            scaleY: stickmanScales[stickman.id]?.scaleY || 1,
-            joints: stickman.joints
-        }));
-
-        const newStickmenJson = JSON.stringify(stickmenToSave);
-        setStickmenJson(newStickmenJson);
-        console.log(newStickmenJson);
-    };
-    const loadStickmen = () => {
-        try {
-            if (stickmenJson != "") {
-                const loadedStickmen = JSON.parse(stickmenJson);
-                setStickmen(loadedStickmen);
-
-                // update stickmanScales state
-                const newStickmanScales: { [key: number]: StickmanScale } = {};
-                loadedStickmen.forEach((stickman: any) => {
-                    newStickmanScales[stickman.id] = {
-                        scaleX: stickman.scaleX,
-                        scaleY: stickman.scaleY,
-                    };
-                });
-                setStickmanScales(newStickmanScales);
-                setStickmen(loadedStickmen);
-            }
-        } catch (error) {
-            console.error("Error loading stickmen:", error);
-        }
-    };
 
 
     const [images, setImages] = useState<{
@@ -81,24 +45,6 @@ const PaintPage: React.FC = () => {
 
     const [nodeType, setNodeType] = useState<string | null>(null);
 
-
-    const addImage = (
-        images: { id: number; x: number; y: number; url: string; }[],
-        setImages: { (value: React.SetStateAction<{ id: number; x: number; y: number; url: string; }[]>): void; (arg0: any[]): void; },
-        uniqueIdCounter: number,
-        setUniqueIdCounter: { (value: React.SetStateAction<number>): void; (arg0: any): void; }
-    ) => {
-        const newImage = {
-            id: uniqueIdCounter,
-            x: Math.random() * 100,  // or wherever you want to place the image
-            y: Math.random() * 100,  // or wherever you want to place the image
-            url: 'https://i.imgur.com/fHyEMsl.jpg',  // the URL of the image
-        };
-
-        setImages([...images, newImage]);
-        setUniqueIdCounter(uniqueIdCounter + 1);
-    };
-
     return (
         <div>
             <div>
@@ -107,9 +53,10 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
                 <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
-                <button onClick={saveStickmen}>Save</button>
-                <button onClick={loadStickmen}>Load</button>
+                <button onClick={() => saveStickmen(stickmen, stickmanScales, setStickmenJson)}>Save</button>
+                <button onClick={() => loadStickmen(stickmenJson, setStickmen, setStickmanScales)}>Load</button>
                 <button onClick={() => addImage(images, setImages, uniqueIdCounter, setUniqueIdCounter)}>Add Image</button>
+
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>
                         <Rect

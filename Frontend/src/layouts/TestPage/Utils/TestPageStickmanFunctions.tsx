@@ -1,5 +1,6 @@
 // paintPageFunctions.ts
 import Konva from 'konva';
+import { Dispatch, SetStateAction } from 'react';
 
 export const addStickman = (
     stickmen: {
@@ -105,3 +106,83 @@ export const handleJointsUpdate = (
     );
 };
 
+
+
+type StickmanScale = {
+    scaleX: number;
+    scaleY: number;
+};
+
+type StickmanType = {
+    id: number;
+    x: number;
+    y: number;
+    joints: Array<{ x: number; y: number }>;
+};
+
+type ImageType = {
+    id: number;
+    x: number;
+    y: number;
+    url: string;
+};
+
+export const saveStickmen = (
+    stickmen: StickmanType[],
+    stickmanScales: { [key: number]: StickmanScale },
+    setStickmenJson: Dispatch<SetStateAction<string>>
+) => {
+    const stickmenToSave = stickmen.map(stickman => ({
+        ...stickman,
+        scaleX: stickmanScales[stickman.id]?.scaleX || 1,
+        scaleY: stickmanScales[stickman.id]?.scaleY || 1,
+        joints: stickman.joints
+    }));
+
+    const newStickmenJson = JSON.stringify(stickmenToSave);
+    setStickmenJson(newStickmenJson);
+    console.log(newStickmenJson);
+};
+
+export const loadStickmen = (
+    stickmenJson: string,
+    setStickmen: Dispatch<SetStateAction<StickmanType[]>>,
+    setStickmanScales: Dispatch<SetStateAction<{ [key: number]: StickmanScale }>>
+) => {
+    try {
+        if (stickmenJson !== "") {
+            const loadedStickmen = JSON.parse(stickmenJson);
+            setStickmen(loadedStickmen);
+
+            // update stickmanScales state
+            const newStickmanScales: { [key: number]: StickmanScale } = {};
+            loadedStickmen.forEach((stickman: any) => {
+                newStickmanScales[stickman.id] = {
+                    scaleX: stickman.scaleX,
+                    scaleY: stickman.scaleY,
+                };
+            });
+            setStickmanScales(newStickmanScales);
+            setStickmen(loadedStickmen);
+        }
+    } catch (error) {
+        console.error("Error loading stickmen:", error);
+    }
+};
+
+export const addImage = (
+    images: ImageType[],
+    setImages: Dispatch<SetStateAction<ImageType[]>>,
+    uniqueIdCounter: number,
+    setUniqueIdCounter: Dispatch<SetStateAction<number>>
+) => {
+    const newImage = {
+        id: uniqueIdCounter,
+        x: Math.random() * 100,  // or wherever you want to place the image
+        y: Math.random() * 100,  // or wherever you want to place the image
+        url: 'https://i.imgur.com/fHyEMsl.jpg',  // the URL of the image
+    };
+
+    setImages([...images, newImage]);
+    setUniqueIdCounter(uniqueIdCounter + 1);
+};

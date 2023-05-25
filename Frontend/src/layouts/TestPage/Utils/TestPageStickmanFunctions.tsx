@@ -54,19 +54,19 @@ export const removeNode = (selectedNode: Konva.Node | null, selectedNodeId: numb
 
 export const bringForward = (selectedNode: Konva.Node | null) => {
     if (selectedNode) {
-        const group = selectedNode as Konva.Group;
-        const parent = group.getParent();
+        const parent = selectedNode.getParent();
         const children = parent.getChildren();
         const backgroundIndex = children.indexOf(parent.findOne("Rect"));
 
         const maxZIndex = children.length - 2; // Exclude the background and the transformer
 
-        if (group.getZIndex() > backgroundIndex && group.getZIndex() < maxZIndex) {
-            group.moveUp();
-            group.getLayer()?.batchDraw();
+        if (selectedNode.getZIndex() > backgroundIndex && selectedNode.getZIndex() < maxZIndex) {
+            selectedNode.moveUp();
+            selectedNode.getLayer()?.batchDraw();
         }
     }
 };
+
 
 export const bringBackward = (selectedNode: Konva.Node | null) => {
     if (selectedNode) {
@@ -126,13 +126,6 @@ type StickmanType = {
     joints: Array<{ x: number; y: number }>;
 };
 
-type ImageType = {
-    id: number;
-    x: number;
-    y: number;
-    url: string;
-};
-
 export const saveStickmen = (
     stickmen: StickmanType[],
     stickmanScales: { [key: number]: StickmanScale },
@@ -174,6 +167,14 @@ export const loadStickmen = (
     } catch (error) {
         console.error("Error loading stickmen:", error);
     }
+};
+
+
+type ImageType = {
+    id: number;
+    x: number;
+    y: number;
+    url: string;
 };
 
 export const addImage = (

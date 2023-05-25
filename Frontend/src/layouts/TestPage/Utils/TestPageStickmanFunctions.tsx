@@ -37,10 +37,16 @@ export const addStickman = (
     setUniqueIdCounter(uniqueIdCounter + 1);
 };
 
-export const removeStickman = (selectedNode: Konva.Node | null, selectedNodeId: number | null, stickmen: { id: number; x: number; y: number }[], setStickmen: Function, setSelectedNode: Function, setSelectedNodeId: Function) => {
+export const removeNode = (selectedNode: Konva.Node | null, selectedNodeId: number | null, stickmen: { id: number; x: number; y: number }[], setStickmen: Function, setSelectedNode: Function, setSelectedNodeId: Function, images: { id: number; x: number; y: number }[], setImages: Function) => {
     if (selectedNode && selectedNodeId !== null) {
         const newStickmen = stickmen.filter((stickman) => stickman.id !== selectedNodeId);
         setStickmen(newStickmen);
+        setSelectedNode(null);
+        setSelectedNodeId(null);
+    }
+    if (selectedNode && selectedNodeId !== null) {
+        const newImages = images.filter((image) => image.id !== selectedNodeId);
+        setImages(newImages);
         setSelectedNode(null);
         setSelectedNodeId(null);
     }

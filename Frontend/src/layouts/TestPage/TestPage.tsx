@@ -7,7 +7,7 @@ import { useStickmanScales } from './Utils/StickmanScalesProvider';
 
 import {
     addStickman,
-    removeStickman,
+    removeNode,
     bringForward,
     bringBackward,
     handleJointsUpdate,
@@ -49,7 +49,7 @@ const PaintPage: React.FC = () => {
         <div>
             <div>
                 <button onClick={() => addStickman(stickmen, setStickmen, uniqueIdCounter, setUniqueIdCounter)}>Add</button>
-                <button onClick={() => removeStickman(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId)}>Remove</button>
+                <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
                 <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>

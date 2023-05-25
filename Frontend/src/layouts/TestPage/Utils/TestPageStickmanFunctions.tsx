@@ -126,10 +126,11 @@ type StickmanType = {
     joints: Array<{ x: number; y: number }>;
 };
 
-export const saveStickmen = (
+export const saveScene = (
     stickmen: StickmanType[],
+    images: ImageType[],
     stickmanScales: { [key: number]: StickmanScale },
-    setStickmenJson: Dispatch<SetStateAction<string>>
+    setSceneJson: Dispatch<SetStateAction<string>>
 ) => {
     const stickmenToSave = stickmen.map(stickman => ({
         ...stickman,
@@ -138,22 +139,30 @@ export const saveStickmen = (
         joints: stickman.joints
     }));
 
-    const newStickmenJson = JSON.stringify(stickmenToSave);
-    setStickmenJson(newStickmenJson);
-    console.log(newStickmenJson);
+    const imagesToSave = images.map(image => ({
+        ...image,
+        scaleX: stickmanScales[image.id]?.scaleX || 1,
+        scaleY: stickmanScales[image.id]?.scaleY || 1
+    }));
+
+    const newSceneJson = JSON.stringify({ stickmen: stickmenToSave, images: imagesToSave });
+    setSceneJson(newSceneJson);
+    console.log(newSceneJson);
 };
 
-export const loadStickmen = (
-    stickmenJson: string,
+export const loadScene = (
+    sceneJson: string,
     setStickmen: Dispatch<SetStateAction<StickmanType[]>>,
+    setImages: Dispatch<SetStateAction<ImageType[]>>,
     setStickmanScales: Dispatch<SetStateAction<{ [key: number]: StickmanScale }>>
 ) => {
     try {
-        if (stickmenJson !== "") {
-            const loadedStickmen = JSON.parse(stickmenJson);
-            setStickmen(loadedStickmen);
+        if (sceneJson !== "") {
+            const loadedScene = JSON.parse(sceneJson);
+            const loadedStickmen = loadedScene.stickmen;
+            const loadedImages = loadedScene.images;
 
-            // update stickmanScales state
+            // update stickmanScales state for stickmen
             const newStickmanScales: { [key: number]: StickmanScale } = {};
             loadedStickmen.forEach((stickman: any) => {
                 newStickmanScales[stickman.id] = {
@@ -161,11 +170,21 @@ export const loadStickmen = (
                     scaleY: stickman.scaleY,
                 };
             });
+
+            // update stickmanScales state for images
+            loadedImages.forEach((image: any) => {
+                newStickmanScales[image.id] = {
+                    scaleX: image.scaleX,
+                    scaleY: image.scaleY,
+                };
+            });
+
             setStickmanScales(newStickmanScales);
             setStickmen(loadedStickmen);
+            setImages(loadedImages);
         }
     } catch (error) {
-        console.error("Error loading stickmen:", error);
+        console.error("Error loading scene:", error);
     }
 };
 

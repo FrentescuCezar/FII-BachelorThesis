@@ -8,10 +8,13 @@ interface ImageWithTransformerProps {
     x: number;
     y: number;
     url: string;
+    scaleX: number;  // Add these new props
+    scaleY: number;  // Add these new props
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     onDragEnd: (id: number, x: number, y: number) => void;
     isSelected: boolean; // new prop to determine if the image is selected or not
+    onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
 }
 
 const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
@@ -19,10 +22,14 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
     x,
     y,
     url,
+    scaleX,
+    scaleY,
     draggable,
     onSelect,
     onDragEnd,
     isSelected, // receive isSelected prop
+    onScaleChange
+
 }) => {
     const imageRef = useRef<Konva.Image>(null);
     const trRef = useRef<Konva.Transformer>(null);
@@ -53,8 +60,32 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
             ref={imageGroupRef}
             x={x}
             y={y}
+            scaleX={scaleX}  // Apply the scales
+            scaleY={scaleY}  // Apply the scales
             draggable={draggable}
-            onDragEnd={(e) => onDragEnd(id, e.target.x(), e.target.y())}
+            onDragEnd={(e) => {
+                if (imageGroupRef.current) {
+                    const newX = imageGroupRef.current.x();
+                    const newY = imageGroupRef.current.y();
+
+                    onDragEnd(id, newX, newY);
+
+                    if (imageGroupRef.current) {
+                        const newScaleX = imageGroupRef.current.scaleX();
+                        const newScaleY = imageGroupRef.current.scaleY();
+                        onScaleChange(id, newScaleX, newScaleY);
+                    }
+                }
+            }}
+
+            onTransformEnd={() => {
+                if (imageGroupRef.current) {
+                    const newScaleX = imageGroupRef.current.scaleX();
+                    const newScaleY = imageGroupRef.current.scaleY();
+                    onScaleChange(id, newScaleX, newScaleY);
+                }
+            }}
+
             onMouseDown={(e) => {
                 onSelect(imageGroupRef.current, id);
                 e.cancelBubble = true;

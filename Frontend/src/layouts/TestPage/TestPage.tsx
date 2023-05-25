@@ -12,8 +12,8 @@ import {
     bringBackward,
     handleJointsUpdate,
     getBase64Image,
-    saveStickmen,
-    loadStickmen,
+    saveScene,
+    loadScene,
     addImage
 } from './Utils/TestPageStickmanFunctions';
 import ImageWithTransformer from './Image/ImageWithTransformer';
@@ -33,7 +33,7 @@ const PaintPage: React.FC = () => {
     const stageRef = useRef<Konva.Stage>(null);
 
     const { stickmanScales, setStickmanScales } = useStickmanScales();
-    const [stickmenJson, setStickmenJson] = useState<string>("");
+    const [sceneJson, setSceneJson] = useState<string>("");
 
 
     const [images, setImages] = useState<{
@@ -53,8 +53,8 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
                 <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
-                <button onClick={() => saveStickmen(stickmen, stickmanScales, setStickmenJson)}>Save</button>
-                <button onClick={() => loadStickmen(stickmenJson, setStickmen, setStickmanScales)}>Load</button>
+                <button onClick={() => saveScene(stickmen, images, stickmanScales, setSceneJson)}>Save</button>
+                <button onClick={() => loadScene(sceneJson, setStickmen, setImages, setStickmanScales)}>Load</button>
                 <button onClick={() => addImage(images, setImages, uniqueIdCounter, setUniqueIdCounter)}>Add Image</button>
 
                 <Stage ref={stageRef} width={512} height={512}>
@@ -110,6 +110,8 @@ const PaintPage: React.FC = () => {
                                 x={image.x}
                                 y={image.y}
                                 url={image.url}
+                                scaleX={stickmanScales[image.id]?.scaleX || 1}
+                                scaleY={stickmanScales[image.id]?.scaleY || 1}
                                 draggable
                                 onSelect={(node, id) => {
                                     setSelectedNode(node);
@@ -126,6 +128,12 @@ const PaintPage: React.FC = () => {
                                     setImages(newImages);
                                 }}
                                 isSelected={selectedNodeId === image.id && nodeType === 'image'} // add this line
+                                onScaleChange={(id, newScaleX, newScaleY) => {
+                                    setStickmanScales({
+                                        ...stickmanScales,
+                                        [id]: { scaleX: newScaleX, scaleY: newScaleY },
+                                    });
+                                }}
                             />
                         ))}
                         <StickmanTransformer selectedNode={selectedNode} nodeType={nodeType} />

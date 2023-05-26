@@ -15,6 +15,7 @@ interface ImageWithTransformerProps {
     onDragEnd: (id: number, x: number, y: number) => void;
     isSelected: boolean; // new prop to determine if the image is selected or not
     onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
+    onRotateChange: (id: number, newRotation: number) => void; // new callback
 }
 
 const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
@@ -28,8 +29,8 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
     onSelect,
     onDragEnd,
     isSelected, // receive isSelected prop
-    onScaleChange
-
+    onScaleChange,
+    onRotateChange, // new callback
 }) => {
     const imageRef = useRef<Konva.Image>(null);
     const trRef = useRef<Konva.Transformer>(null);
@@ -82,7 +83,9 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
                 if (imageGroupRef.current) {
                     const newScaleX = imageGroupRef.current.scaleX();
                     const newScaleY = imageGroupRef.current.scaleY();
+                    const newRotation = imageGroupRef.current.rotation(); // get the new rotation value
                     onScaleChange(id, newScaleX, newScaleY);
+                    onRotateChange(id, newRotation); // call the onRotateChange callback
                 }
             }}
 

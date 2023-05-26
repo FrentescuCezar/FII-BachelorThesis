@@ -45,6 +45,16 @@ const PaintPage: React.FC = () => {
 
     const [nodeType, setNodeType] = useState<string | null>(null);
 
+    const handleRotateChange = (id: number, newRotation: number) => {
+        setStickmanScales(prev => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                rotation: newRotation
+            }
+        }));
+    };
+
     return (
         <div>
             <div>
@@ -98,9 +108,10 @@ const PaintPage: React.FC = () => {
                                 onScaleChange={(id, newScaleX, newScaleY) => {
                                     setStickmanScales({
                                         ...stickmanScales,
-                                        [id]: { scaleX: newScaleX, scaleY: newScaleY },
+                                        [id]: { scaleX: newScaleX, scaleY: newScaleY, rotation: stickmanScales[id]?.rotation || 0 },
                                     });
                                 }}
+                                onRotateChange={handleRotateChange} // new callback
                             />
                         ))}
                         {images.map((image, index) => (
@@ -131,9 +142,10 @@ const PaintPage: React.FC = () => {
                                 onScaleChange={(id, newScaleX, newScaleY) => {
                                     setStickmanScales({
                                         ...stickmanScales,
-                                        [id]: { scaleX: newScaleX, scaleY: newScaleY },
+                                        [id]: { scaleX: newScaleX, scaleY: newScaleY, rotation: stickmanScales[id]?.rotation || 0 },
                                     });
                                 }}
+                                onRotateChange={handleRotateChange} // new callback
                             />
                         ))}
                         <StickmanTransformer selectedNode={selectedNode} nodeType={nodeType} />

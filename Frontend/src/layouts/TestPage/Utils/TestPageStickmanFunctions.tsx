@@ -117,6 +117,8 @@ export const handleJointsUpdate = (
 type StickmanScale = {
     scaleX: number;
     scaleY: number;
+    rotation: number;
+
 };
 
 type StickmanType = {
@@ -136,13 +138,15 @@ export const saveScene = (
         ...stickman,
         scaleX: stickmanScales[stickman.id]?.scaleX || 1,
         scaleY: stickmanScales[stickman.id]?.scaleY || 1,
-        joints: stickman.joints
+        joints: stickman.joints,
+        rotation: stickmanScales[stickman.id]?.rotation || 0,
     }));
 
     const imagesToSave = images.map(image => ({
         ...image,
         scaleX: stickmanScales[image.id]?.scaleX || 1,
-        scaleY: stickmanScales[image.id]?.scaleY || 1
+        scaleY: stickmanScales[image.id]?.scaleY || 1,
+        rotation: stickmanScales[image.id]?.rotation || 1,
     }));
 
     const newSceneJson = JSON.stringify({ stickmen: stickmenToSave, images: imagesToSave });
@@ -168,6 +172,7 @@ export const loadScene = (
                 newStickmanScales[stickman.id] = {
                     scaleX: stickman.scaleX,
                     scaleY: stickman.scaleY,
+                    rotation: stickman.rotation
                 };
             });
 
@@ -176,6 +181,7 @@ export const loadScene = (
                 newStickmanScales[image.id] = {
                     scaleX: image.scaleX,
                     scaleY: image.scaleY,
+                    rotation: image.rotation
                 };
             });
 

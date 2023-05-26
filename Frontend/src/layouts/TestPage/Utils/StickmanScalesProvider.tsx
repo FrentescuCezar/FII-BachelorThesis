@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 interface StickmanScale {
     scaleX: number;
     scaleY: number;
+    rotation: number; // new prop
 }
 
 interface StickmanScalesContextType {
@@ -26,7 +27,7 @@ export const useStickmanScales = () => {
 };
 
 export const StickmanScalesProvider: React.FC<StickmanScalesProviderProps> = ({ children }) => {
-    const [stickmanScales, setStickmanScales] = React.useState<{ [key: number]: StickmanScale }>({});
+    const [stickmanScales, setStickmanScales] = useState<{ [key: number]: StickmanScale }>({});
 
     return (
         <StickmanScalesContext.Provider value={{ stickmanScales, setStickmanScales }}>

@@ -17,11 +17,10 @@ interface StickmanProps {
     scaleY: number;  // Add these new props
     onDragEnd: (id: number, newX: number, newY: number) => void;  // Add this line
     onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
-
-
+    onRotateChange: (id: number, newRotation: number) => void; // new callback
 }
 
-const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange }) => {
+const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange, onRotateChange }) => {
 
     const stickmanGroupRef = useRef<Konva.Group>(null);
 
@@ -71,7 +70,9 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, join
                 if (stickmanGroupRef.current) {
                     const newScaleX = stickmanGroupRef.current.scaleX();
                     const newScaleY = stickmanGroupRef.current.scaleY();
+                    const newRotation = stickmanGroupRef.current.rotation(); // get the new rotation value
                     onScaleChange(id, newScaleX, newScaleY);
+                    onRotateChange(id, newRotation); // call the onRotateChange callback
                 }
             }}
 

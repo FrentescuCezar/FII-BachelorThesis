@@ -16,7 +16,7 @@ import {
     loadScene,
     addImage
 } from './Utils/TestPageStickmanFunctions';
-import ImageWithTransformer from './Image/ImageWithTransformer';
+import ImageCustom from './Image/Image';
 
 const PaintPage: React.FC = () => {
     const [stickmen, setStickmen] = useState<{
@@ -133,7 +133,7 @@ const PaintPage: React.FC = () => {
                             />
                         ))}
                         {images.map((image, index) => (
-                            <ImageWithTransformer
+                            <ImageCustom
                                 key={image.id}
                                 id={image.id}
                                 x={image.x}

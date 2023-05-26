@@ -3,14 +3,14 @@ import React, { useEffect, useRef } from 'react';
 import { Image, Transformer, Group } from 'react-konva';
 import useImage from 'use-image';
 
-interface ImageWithTransformerProps {
+interface ImageProps {
     id: number;
     x: number;
     y: number;
     url: string;
     scaleX: number;  // Add these new props
     scaleY: number;  // Add these new props
-    rotation:number
+    rotation: number
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     onDragEnd: (id: number, x: number, y: number) => void;
@@ -18,7 +18,7 @@ interface ImageWithTransformerProps {
     onRotateChange: (id: number, newRotation: number) => void; // new callback
 }
 
-const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
+const ImageCustom: React.FC<ImageProps> = ({
     id,
     x,
     y,
@@ -100,4 +100,4 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
     );
 };
 
-export default ImageWithTransformer;
+export default ImageCustom;

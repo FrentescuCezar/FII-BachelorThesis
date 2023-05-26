@@ -9,7 +9,7 @@ interface StickmanProps {
     id: number;
     x: number;
     y: number;
-    rotation:number;
+    rotation: number;
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     joints: Array<{ x: number; y: number }>;
@@ -43,6 +43,7 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, rotation, draggable, onSe
 
     return (
         <Group
+            id={id.toString()} // Convert to string because Konva's id is a string
             ref={stickmanGroupRef}
             x={x}
             y={y}

@@ -81,14 +81,65 @@ export const bringBackward = (selectedNode: Konva.Node | null) => {
     }
 };
 
-export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>) => {
-    if (stageRef.current) {
-        const base64Image = stageRef.current.toDataURL();
 
-        console.log(base64Image);
-        // You can now use the base64Image in your JSON payload or for any other purpose
+
+export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, nodesToInclude: number[]) => {
+    if (!stageRef.current) {
+      return;
     }
-};
+  
+    const stage = stageRef.current;
+  
+    // Create a temporary container element
+    const tempContainer = document.createElement('div');
+  
+    // Create a new stage with the same dimensions
+    const tempStage = new Konva.Stage({
+      container: tempContainer,
+      width: stage.width(),
+      height: stage.height(),
+    });
+  
+    // Create a new layer for the cloned image nodes
+    const tempLayer = new Konva.Layer();
+  
+    // Find and clone the specified image nodes
+    nodesToInclude.forEach((id) => {
+      const node = stage.findOne(`#${id}`);
+      if (node && (node instanceof Konva.Group || node instanceof Konva.Image)) {
+        const clone = node.clone();
+        tempLayer.add(clone);
+      }
+    });
+  
+    // Add the layer to the stage
+    tempStage.add(tempLayer);
+  
+    // Render the stage to an off-screen canvas
+    const canvas = tempStage.toCanvas();
+  
+    // Get the data URL of the canvas
+    const dataUrl = canvas.toDataURL();
+    console.log(dataUrl);
+  
+    // Clean up
+    tempLayer.destroy();
+    tempStage.destroy();
+    tempContainer.remove();
+  };
+  
+  
+
+
+
+
+
+
+
+
+
+
+
 
 
 export const handleJointsUpdate = (

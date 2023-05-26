@@ -55,6 +55,7 @@ const ImageCustom: React.FC<ImageProps> = ({
 
     return (
         <Group
+            id={id.toString()} // Convert to string because Konva's id is a string
             ref={imageGroupRef}
             x={x}
             y={y}

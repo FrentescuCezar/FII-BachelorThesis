@@ -77,7 +77,7 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
-                <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
+                <button onClick={() => getBase64Image(stageRef, stickmen.map(image => image.id))}>Save Image base64</button>
                 <button onClick={() => saveScene(stickmen, images, stickmanScales, setSceneJson)}>Save</button>
                 <input type="file" id="scene-file" style={{ display: 'none' }} onChange={loadSceneFromFile} />
                 <button onClick={() => document.getElementById('scene-file')?.click()}>Load from file</button>

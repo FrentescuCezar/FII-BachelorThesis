@@ -10,10 +10,10 @@ interface ImageWithTransformerProps {
     url: string;
     scaleX: number;  // Add these new props
     scaleY: number;  // Add these new props
+    rotation:number
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     onDragEnd: (id: number, x: number, y: number) => void;
-    isSelected: boolean; // new prop to determine if the image is selected or not
     onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
     onRotateChange: (id: number, newRotation: number) => void; // new callback
 }
@@ -25,26 +25,15 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
     url,
     scaleX,
     scaleY,
+    rotation,
     draggable,
     onSelect,
     onDragEnd,
-    isSelected, // receive isSelected prop
     onScaleChange,
     onRotateChange, // new callback
 }) => {
     const imageRef = useRef<Konva.Image>(null);
-    const trRef = useRef<Konva.Transformer>(null);
     const [img] = useImage(url, 'anonymous');
-
-    useEffect(() => {
-        if (isSelected) {
-            if (imageRef.current) {
-                // attaches / detaches Transformer tool based on isSelected prop
-                trRef.current?.setNodes([imageRef.current]);
-                trRef.current?.getLayer()?.batchDraw();
-            }
-        }
-    }, [isSelected]);
 
     const imageGroupRef = useRef<Konva.Group>(null);
 
@@ -55,6 +44,14 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
         e.cancelBubble = true;
     };
 
+
+    useEffect(() => {
+        if (imageGroupRef.current) {
+            imageGroupRef.current.scaleX(scaleX);
+            imageGroupRef.current.scaleY(scaleY);
+            imageGroupRef.current.rotation(rotation);
+        }
+    }, [scaleX, scaleY, rotation]);
 
     return (
         <Group
@@ -81,11 +78,12 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
 
             onTransformEnd={() => {
                 if (imageGroupRef.current) {
+                    const newRotation = imageGroupRef.current.rotation();
                     const newScaleX = imageGroupRef.current.scaleX();
                     const newScaleY = imageGroupRef.current.scaleY();
-                    const newRotation = imageGroupRef.current.rotation(); // get the new rotation value
+
                     onScaleChange(id, newScaleX, newScaleY);
-                    onRotateChange(id, newRotation); // call the onRotateChange callback
+                    onRotateChange(id, newRotation);
                 }
             }}
 
@@ -98,7 +96,6 @@ const ImageWithTransformer: React.FC<ImageWithTransformerProps> = ({
             name="Image"
         >
             <Image ref={imageRef} image={img} />
-            {isSelected && <Transformer ref={trRef} />}
         </Group>
     );
 };

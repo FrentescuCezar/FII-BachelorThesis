@@ -55,6 +55,21 @@ const PaintPage: React.FC = () => {
         }));
     };
 
+    const loadSceneFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files ? event.target.files[0] : null;
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const sceneJson = event.target?.result as string;
+                loadScene(sceneJson, setStickmen, setImages, setStickmanScales);
+            };
+
+            reader.readAsText(file);
+        }
+    };
+
     return (
         <div>
             <div>
@@ -64,7 +79,8 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
                 <button onClick={() => getBase64Image(stageRef)}>Save Image base64</button>
                 <button onClick={() => saveScene(stickmen, images, stickmanScales, setSceneJson)}>Save</button>
-                <button onClick={() => loadScene(sceneJson, setStickmen, setImages, setStickmanScales)}>Load</button>
+                <input type="file" id="scene-file" style={{ display: 'none' }} onChange={loadSceneFromFile} />
+                <button onClick={() => document.getElementById('scene-file')?.click()}>Load from file</button>
                 <button onClick={() => addImage(images, setImages, uniqueIdCounter, setUniqueIdCounter)}>Add Image</button>
 
                 <Stage ref={stageRef} width={512} height={512}>
@@ -85,6 +101,8 @@ const PaintPage: React.FC = () => {
                                 y={stickman.y}
                                 scaleX={stickmanScales[stickman.id]?.scaleX || 1}
                                 scaleY={stickmanScales[stickman.id]?.scaleY || 1}
+                                rotation={stickmanScales[stickman.id]?.rotation || 0}
+
                                 draggable
                                 onSelect={(node, id) => {
                                     setSelectedNode(node);
@@ -123,6 +141,7 @@ const PaintPage: React.FC = () => {
                                 url={image.url}
                                 scaleX={stickmanScales[image.id]?.scaleX || 1}
                                 scaleY={stickmanScales[image.id]?.scaleY || 1}
+                                rotation={stickmanScales[image.id]?.rotation || 0}
                                 draggable
                                 onSelect={(node, id) => {
                                     setSelectedNode(node);
@@ -138,7 +157,6 @@ const PaintPage: React.FC = () => {
                                     });
                                     setImages(newImages);
                                 }}
-                                isSelected={selectedNodeId === image.id && nodeType === 'image'} // add this line
                                 onScaleChange={(id, newScaleX, newScaleY) => {
                                     setStickmanScales({
                                         ...stickmanScales,

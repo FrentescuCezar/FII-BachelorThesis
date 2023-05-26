@@ -151,6 +151,16 @@ export const saveScene = (
 
     const newSceneJson = JSON.stringify({ stickmen: stickmenToSave, images: imagesToSave });
     setSceneJson(newSceneJson);
+
+    // Create a Blob object from the JSON string
+    const blob = new Blob([newSceneJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link element, set the download attribute and click it
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'scene.json';
+    link.click();
     console.log(newSceneJson);
 };
 

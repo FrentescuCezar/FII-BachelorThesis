@@ -12,7 +12,7 @@ const StickmanTransformer: React.FC<StickmanTransformerProps> = ({ selectedNode,
 
     useEffect(() => {
         if (transformerRef.current) {
-            if (selectedNode && nodeType === 'stickman') {
+            if (selectedNode && (nodeType === 'stickman' || nodeType === 'image')) {
                 // Adjust properties for stickmen
                 transformerRef.current.rotateEnabled(true);
                 transformerRef.current.enabledAnchors(['top-left', 'top-right', 'bottom-left', 'bottom-right']);

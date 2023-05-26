@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Group, Circle } from 'react-konva';
 import { colors } from './Colors';
 
@@ -9,6 +9,7 @@ interface StickmanProps {
     id: number;
     x: number;
     y: number;
+    rotation:number;
     draggable: boolean;
     onSelect: (node: Konva.Node | null, id: number | null) => void;
     joints: Array<{ x: number; y: number }>;
@@ -20,7 +21,7 @@ interface StickmanProps {
     onRotateChange: (id: number, newRotation: number) => void; // new callback
 }
 
-const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange, onRotateChange }) => {
+const Stickman: React.FC<StickmanProps> = ({ id, x, y, rotation, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange, onRotateChange }) => {
 
     const stickmanGroupRef = useRef<Konva.Group>(null);
 
@@ -30,6 +31,14 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, draggable, onSelect, join
         }
         e.cancelBubble = true;
     };
+
+    useEffect(() => {
+        if (stickmanGroupRef.current) {
+            stickmanGroupRef.current.scaleX(scaleX);
+            stickmanGroupRef.current.scaleY(scaleY);
+            stickmanGroupRef.current.rotation(rotation);
+        }
+    }, [scaleX, scaleY, rotation]);
 
 
     return (

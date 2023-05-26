@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import Stickman from './Components/Stickman/Stickman';
-import StickmanTransformer from './Components/Stickman/StickmanTransformer';
+import StickmanTransformer from './Components/Stickman/TransformerCustom';
 import Konva from 'konva';
 import { useStickmanScales } from './Utils/StickmanScalesProvider';
 

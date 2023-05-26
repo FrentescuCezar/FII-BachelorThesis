@@ -15,7 +15,10 @@ const StickmanTransformer: React.FC<StickmanTransformerProps> = ({ selectedNode,
             if (selectedNode && (nodeType === 'stickman' || nodeType === 'image')) {
                 // Adjust properties for stickmen
                 transformerRef.current.rotateEnabled(true);
-                transformerRef.current.enabledAnchors(['top-left', 'top-right', 'bottom-left', 'bottom-right']);
+                transformerRef.current.enabledAnchors([
+                    'top-left', 'top-right', 'bottom-left', 'bottom-right',
+                    'middle-left', 'middle-right'  // Enable middle-left and middle-right anchors
+                ]);
                 transformerRef.current.nodes([selectedNode]);
             }
             else {
@@ -29,7 +32,10 @@ const StickmanTransformer: React.FC<StickmanTransformerProps> = ({ selectedNode,
         <Transformer
             ref={transformerRef}
             rotateEnabled={true}
-            enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+            enabledAnchors={[
+                'top-left', 'top-right', 'bottom-left', 'bottom-right',
+                'middle-left', 'middle-right'  // Enable middle-left and middle-right anchors
+            ]}
         />
     );
 };

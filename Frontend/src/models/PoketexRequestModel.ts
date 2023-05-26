@@ -11,7 +11,7 @@ class PoketexRequestModel {
     steps: number;
     seed: number;
 
-    constructor(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation:number, negativePrompt?: string, parent1?: number, parent2?: number) {
+    constructor(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation: number, negativePrompt?: string, parent1?: number, parent2?: number) {
         this.name = name;
         this.description = description;
         this.prompt = prompt;

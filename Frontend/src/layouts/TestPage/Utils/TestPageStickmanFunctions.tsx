@@ -83,52 +83,67 @@ export const bringBackward = (selectedNode: Konva.Node | null) => {
 
 
 
-export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, nodesToInclude: number[]) => {
+
+
+export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, base64Image: string, setBase64Image: React.Dispatch<React.SetStateAction<string>>, nodesToInclude: number[]): string => {
     if (!stageRef.current) {
-      return;
+        setBase64Image('')
+        return '';
     }
-  
+
     const stage = stageRef.current;
-  
+
     // Create a temporary container element
     const tempContainer = document.createElement('div');
-  
+
     // Create a new stage with the same dimensions
     const tempStage = new Konva.Stage({
-      container: tempContainer,
-      width: stage.width(),
-      height: stage.height(),
+        container: tempContainer,
+        width: stage.width(),
+        height: stage.height(),
     });
-  
+
     // Create a new layer for the cloned image nodes
     const tempLayer = new Konva.Layer();
-  
+
     // Find and clone the specified image nodes
     nodesToInclude.forEach((id) => {
-      const node = stage.findOne(`#${id}`);
-      if (node && (node instanceof Konva.Group || node instanceof Konva.Image)) {
-        const clone = node.clone();
-        tempLayer.add(clone);
-      }
+        const node = stage.findOne(`#${id}`);
+        if (node && (node instanceof Konva.Group || node instanceof Konva.Image)) {
+            const clone = node.clone();
+            tempLayer.add(clone);
+        }
     });
-  
+
     // Add the layer to the stage
     tempStage.add(tempLayer);
-  
+
+    // Check if the layer is empty
+    if (!tempLayer.children || tempLayer.children.length === 0) {
+        tempLayer.destroy();
+        tempStage.destroy();
+        tempContainer.remove();
+        setBase64Image('')
+        return '';
+    }
+
     // Render the stage to an off-screen canvas
     const canvas = tempStage.toCanvas();
-  
+
     // Get the data URL of the canvas
     const dataUrl = canvas.toDataURL();
-    console.log(dataUrl);
-  
+    setBase64Image(dataUrl)
+
     // Clean up
     tempLayer.destroy();
     tempStage.destroy();
     tempContainer.remove();
-  };
-  
-  
+
+
+    return dataUrl;
+};
+
+
 
 
 

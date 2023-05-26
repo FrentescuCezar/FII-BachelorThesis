@@ -1,4 +1,4 @@
-package com.fiipractic.stablediffusion.model;
+package com.fiipractic.stablediffusion.response;
 
 import lombok.Data;
 

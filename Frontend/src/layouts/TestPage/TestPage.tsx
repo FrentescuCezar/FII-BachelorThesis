@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import Stickman from './Components/Stickman/Stickman';
 import StickmanTransformer from './Components/Stickman/TransformerCustom';
@@ -17,8 +17,15 @@ import {
     addImage
 } from './Utils/TestPageStickmanFunctions';
 import ImageCustom from './Image/Image';
+import { useOktaAuth } from '@okta/okta-react';
+import { submitPositions } from './Api/PosingApi';
 
 const PaintPage: React.FC = () => {
+
+    const { authState } = useOktaAuth();
+
+    console.log(authState)
+
     const [stickmen, setStickmen] = useState<{
         id: number;
         x: number;
@@ -70,6 +77,25 @@ const PaintPage: React.FC = () => {
         }
     };
 
+    const [imageBase64, setImageBase64] = useState<string>("");
+    const [stickmanBase64, setStickmanBase64] = useState<string>("");
+    const [submitClicked, setSubmitClicked] = useState(false);
+
+    // Handle onSubmit - set both images and set submitClicked to true
+    const handleOnSubmit = () => {
+        getBase64Image(stageRef, imageBase64, setImageBase64, images.map(image => image.id));
+        getBase64Image(stageRef, stickmanBase64, setStickmanBase64, stickmen.map(stickman => stickman.id));
+        saveScene(stickmen, images, stickmanScales, setSceneJson)
+        setSubmitClicked(true);
+    };
+
+    useEffect(() => {
+        if (submitClicked && (imageBase64 || stickmanBase64)) {
+            submitPositions(sceneJson, imageBase64, stickmanBase64, authState);
+            setSubmitClicked(false);  // reset after submission
+        }
+    }, [submitClicked, imageBase64, stickmanBase64]);
+
     return (
         <div>
             <div>
@@ -77,13 +103,10 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
-                <button onClick={() => getBase64Image(stageRef, images.map(image => image.id))}>Save Images</button>
-                <button onClick={() => getBase64Image(stageRef, stickmen.map(stickman => stickman.id))}>Save Stickmen</button>
-
-                <button onClick={() => saveScene(stickmen, images, stickmanScales, setSceneJson)}>Save</button>
                 <input type="file" id="scene-file" style={{ display: 'none' }} onChange={loadSceneFromFile} />
                 <button onClick={() => document.getElementById('scene-file')?.click()}>Load from file</button>
                 <button onClick={() => addImage(images, setImages, uniqueIdCounter, setUniqueIdCounter)}>Add Image</button>
+                <button onClick={handleOnSubmit}>Submit Position</button>
 
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>

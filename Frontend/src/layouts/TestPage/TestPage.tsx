@@ -20,12 +20,12 @@ import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
 import { submitPositions } from './Api/PosingApi';
 import { Button, Modal } from 'react-bootstrap';
+import DepthMapModal from './Components/DepthMaps/DepthMapModal';
 
 const PaintPage: React.FC = () => {
 
     const { authState } = useOktaAuth();
 
-    console.log(authState)
 
     const [stickmen, setStickmen] = useState<{
         id: number;
@@ -97,42 +97,12 @@ const PaintPage: React.FC = () => {
         }
     }, [submitClicked, imageBase64, stickmanBase64]);
 
-    type DepthMap = {
-        id: number;
-        imageBase64: string;
-        category: string;
-    };
 
-    const [categories, setCategories] = useState<string[]>([]);
-    const [depthMaps, setDepthMaps] = useState<DepthMap[]>([]);
-
-    async function fetchCategories() {
-        const res = await fetch("http://localhost:8081/api/depthmaps");
-        const data = await res.json();
-
-        const categories = Array.from(new Set<string>(data.map((item: DepthMap) => item.category)));
-        setCategories(categories);
-    }
-
-    async function fetchDepthMaps(category: string) {
-        const res = await fetch(`http://localhost:8081/api/depthmaps/category/${category}`);
-        const data = await res.json();
-
-        setDepthMaps(data);
-    }
-
-    useEffect(() => {
-        fetchCategories();
-    }, []);
 
 
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
-    const handleShow = () => {
-        fetchCategories();
-        setShow(true);
-    }
+    const handleShow = () => setShow(true);
 
     return (
         <div>
@@ -149,64 +119,15 @@ const PaintPage: React.FC = () => {
                     Load DepthMaps
                 </Button>
 
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Select a category</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {categories.map(category => (
-                            <Button variant="secondary" onClick={() => fetchDepthMaps(category)} key={category}>
-                                {category}
-                            </Button>
-                        ))}
-                        <div style={{
-                            display: 'grid',
-                            gridGap: '1em',
-                            gridTemplateColumns: 'repeat(3, 1fr)'  // 3 images per row
-                        }}>
-                            {depthMaps.map(depthMap => (
-                                <div
-                                    style={{
-                                        border: '1px solid #ccc',
-                                        padding: '10px',
-                                        boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)',
-                                        transition: 'box-shadow 0.3s ease-in-out',  // smooth transition for the hover effect
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',  // center the content vertically
-                                        width: '128px',
-                                        height: '128px',
-                                        boxSizing: 'border-box'  // include padding and border in the dimensions
-                                    }}
-                                    onMouseEnter={e => e.currentTarget.style.boxShadow = '5px 5px 10px rgba(0, 0, 0, 0.5)'}  // increase the box shadow on hover
-                                    onMouseLeave={e => e.currentTarget.style.boxShadow = '2px 2px 5px rgba(0, 0, 0, 0.3)'}  // reset box shadow when mouse leaves
-                                    key={depthMap.id}
-                                >
-                                    <img
-                                        src={`${depthMap.imageBase64}`}
-                                        alt={depthMap.category}
-                                        onClick={() => addImage(images, depthMap.imageBase64, setImages, uniqueIdCounter, setUniqueIdCounter)}
-                                        style={{
-                                            cursor: 'pointer',
-                                            maxWidth: '100%',  // scale the image to fit within the box
-                                            maxHeight: '100%',  // scale the image to fit within the box
-                                        }}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-
-
-
-
+                <DepthMapModal
+                    show={show}
+                    handleClose={handleClose}
+                    addImage={addImage}
+                    images={images}
+                    setImages={setImages}
+                    uniqueIdCounter={uniqueIdCounter}
+                    setUniqueIdCounter={setUniqueIdCounter}
+                />
 
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>

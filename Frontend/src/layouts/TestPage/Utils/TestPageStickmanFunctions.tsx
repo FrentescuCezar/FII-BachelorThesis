@@ -276,21 +276,58 @@ type ImageType = {
     x: number;
     y: number;
     url: string;
+
 };
 
 export const addImage = (
     images: ImageType[],
+    urlBase64: string,
     setImages: Dispatch<SetStateAction<ImageType[]>>,
     uniqueIdCounter: number,
     setUniqueIdCounter: Dispatch<SetStateAction<number>>
 ) => {
-    const newImage = {
-        id: uniqueIdCounter,
-        x: Math.random() * 100,  // or wherever you want to place the image
-        y: Math.random() * 100,  // or wherever you want to place the image
-        url: 'https://i.imgur.com/fHyEMsl.jpg',  // the URL of the image
+    const image = new window.Image();
+    image.onload = () => {
+        const stageSize = 512;
+        const imageSize = Math.max(image.width, image.height);
+
+        let scaleX = 1;
+        let scaleY = 1;
+
+        if (imageSize > stageSize) {
+            scaleX = stageSize / imageSize;
+            scaleY = stageSize / imageSize;
+        }
+
+        const canvas = document.createElement('canvas');
+        const canvasContext = canvas.getContext('2d');
+
+        if (canvasContext) {
+            const scaledWidth = image.width * scaleX;
+            const scaledHeight = image.height * scaleY;
+
+            canvas.width = scaledWidth;
+            canvas.height = scaledHeight;
+            canvasContext.drawImage(image, 0, 0, scaledWidth, scaledHeight);
+
+            const scaledUrlBase64 = canvas.toDataURL();
+
+            const newImage = {
+                id: uniqueIdCounter,
+                x: 0,
+                y: 0,
+                url: scaledUrlBase64,
+                scaleX,
+                scaleY,
+            };
+
+            setImages([...images, newImage]);
+            setUniqueIdCounter(uniqueIdCounter + 1);
+        }
+
+        // Clean up the temporary canvas
+        canvas.remove();
     };
 
-    setImages([...images, newImage]);
-    setUniqueIdCounter(uniqueIdCounter + 1);
+    image.src = urlBase64;
 };

@@ -30,4 +30,7 @@ public class Positions {
     @Column(name="image_custom_image", columnDefinition = "text")
     private String imageCustomImage;
 
+    @Column(name="generated_image", columnDefinition = "text")
+    private String generatedImage;
+
 }

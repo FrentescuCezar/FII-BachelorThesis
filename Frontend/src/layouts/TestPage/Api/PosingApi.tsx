@@ -6,9 +6,9 @@ export async function submitPositions(
     imageCustomImage: string,
     authState: any,
 ) {
-    const poketexRequestModel = new PositionsRequestModel(positions, stickmanImage, imageCustomImage);
+    const poketexRequestModel = new PositionsRequestModel(positions, stickmanImage, imageCustomImage, "");
 
-    const url = `http://localhost:8081/api/addPosition`;
+    const url = `http://localhost:8081/api/positions/addPosition`;
     const requestOptons = {
         method: 'POST',
         headers: {

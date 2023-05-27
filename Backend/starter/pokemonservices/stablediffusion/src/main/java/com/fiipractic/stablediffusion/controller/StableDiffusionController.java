@@ -50,7 +50,7 @@ public class StableDiffusionController {
         return stableDiffusionService.generateImageToImage(imageRequest);
     }
 
-    @PostMapping(value = "/addPosition")
+    @PostMapping(value = "/positions/addPosition")
     public ResponseEntity<Positions> AddPosition(@RequestHeader(value = "Authorization") String token, @RequestBody PositionsRequest positionsRequest) throws Exception {
         try {
             String username = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
@@ -64,7 +64,7 @@ public class StableDiffusionController {
         }
     }
 
-    @GetMapping(value = "/recent")
+    @GetMapping(value = "/positions/recentByUsername")
     public Page<Positions> getRecentPositions(@RequestHeader(value = "Authorization") String token,
                                               @RequestParam("page") int page,
                                               @RequestParam("size") int size) {

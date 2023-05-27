@@ -19,13 +19,13 @@ import {
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
 import { submitPositions } from './Api/PosingApi';
-import { Button, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import DepthMapModal from './Components/DepthMaps/DepthMapModal';
 
 const PaintPage: React.FC = () => {
 
     const { authState } = useOktaAuth();
-
+    console.log(authState)
 
     const [stickmen, setStickmen] = useState<{
         id: number;

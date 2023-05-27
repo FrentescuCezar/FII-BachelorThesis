@@ -7,4 +7,5 @@ public class PositionsRequest {
     private String positions;
     private String stickmanImage;
     private String imageCustomImage;
+    private String generatedImage;
 }

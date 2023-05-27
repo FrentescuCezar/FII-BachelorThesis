@@ -9,6 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public interface PositionsRepository extends JpaRepository<Positions, Integer> {
-    @CrossOrigin(origins = "http://localhost:3000")
-    Page<Positions> findAllByOrderByIdDesc(Pageable pageable);
+    Page<Positions> findAllByUsernameOrderByIdDesc(String username, Pageable pageable);
 }

@@ -12,6 +12,7 @@ import com.fiipractic.stablediffusion.service.PositionsService;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
 
 import com.fiipractic.stablediffusion.utils.ExtractJWT;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,4 +55,14 @@ public class StableDiffusionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "recent")
+    public Page<Positions> getRecentPositions(@RequestHeader(value = "Authorization") String token,
+                                              @RequestParam("page") int page,
+                                              @RequestParam("size") int size) {
+        String username = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+
+        return positionsService.findAllByUsernameOrderByIdDesc(username, page, size);
+    }
+
 }

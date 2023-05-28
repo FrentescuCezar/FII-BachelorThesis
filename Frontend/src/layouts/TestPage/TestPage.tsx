@@ -19,8 +19,9 @@ import {
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
 import { submitPositions } from './Api/PosingApi';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import DepthMapModal from './Components/DepthMaps/DepthMapModal';
+import { Positions } from '../../models/PositionsModel';
 
 const PaintPage: React.FC = () => {
 
@@ -63,20 +64,6 @@ const PaintPage: React.FC = () => {
         }));
     };
 
-    const loadSceneFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files ? event.target.files[0] : null;
-
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = (event) => {
-                const sceneJson = event.target?.result as string;
-                loadScene(sceneJson, setStickmen, setImages, setStickmanScales);
-            };
-
-            reader.readAsText(file);
-        }
-    };
 
     const [imageBase64, setImageBase64] = useState<string>("");
     const [stickmanBase64, setStickmanBase64] = useState<string>("");
@@ -92,7 +79,7 @@ const PaintPage: React.FC = () => {
 
     useEffect(() => {
         if (submitClicked && (imageBase64 || stickmanBase64)) {
-            submitPositions(sceneJson, imageBase64, stickmanBase64, authState);
+            submitPositions(sceneJson, stickmanBase64, imageBase64, authState);
             setSubmitClicked(false);  // reset after submission
         }
     }, [submitClicked, imageBase64, stickmanBase64]);
@@ -104,6 +91,48 @@ const PaintPage: React.FC = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+
+    // States for modals
+    const [showDepthMap, setShowDepthMap] = useState(false);
+    const [showPositions, setShowPositions] = useState(false);
+
+    // Handlers for modals
+    const handleCloseDepthMap = () => setShowDepthMap(false);
+    const handleShowDepthMap = () => setShowDepthMap(true);
+
+    const handleClosePositions = () => setShowPositions(false);
+    const handleShowPositions = () => setShowPositions(true);
+
+
+
+
+
+
+    const [page, setPage] = useState(0);
+    const [positions, setPositions] = useState<Positions[]>([]);
+    const [lastPage, setLastPage] = useState(false);
+    useEffect(() => {
+        if (!authState || !authState.accessToken) return;
+
+        fetch(`http://localhost:8081/api/positions/recentByUsername?page=${page}&size=3`, {
+            headers: {
+                Authorization: `Bearer ${authState.accessToken.accessToken}`,
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setPositions(data.content);
+                setPage(data.number);  // current page
+                setLastPage(data.last);  // last page
+            })
+            .catch((err) => console.error(err));
+    }, [page, authState]);
+
+
+    const [isHovered, setIsHovered] = useState<number | null>(null);
+
+
+
     return (
         <div>
             <div>
@@ -111,23 +140,124 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
-                <input type="file" id="scene-file" style={{ display: 'none' }} onChange={loadSceneFromFile} />
-                <button onClick={() => document.getElementById('scene-file')?.click()}>Load from file</button>
                 <button onClick={handleOnSubmit}>Submit Position</button>
 
-                <Button variant="primary" onClick={handleShow}>
+                <Button variant="primary" onClick={handleShowDepthMap}>
                     Load DepthMaps
                 </Button>
 
+                <Button variant="primary" onClick={handleShowPositions}>
+                    Load Positions
+                </Button>
+
                 <DepthMapModal
-                    show={show}
-                    handleClose={handleClose}
+                    show={showDepthMap}
+                    handleClose={handleCloseDepthMap}
                     addImage={addImage}
                     images={images}
                     setImages={setImages}
                     uniqueIdCounter={uniqueIdCounter}
                     setUniqueIdCounter={setUniqueIdCounter}
                 />
+
+
+
+                <Modal show={showPositions} style={{ maxWidth: '90%' }} onHide={handleClosePositions}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Load Positions</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'flex-start',
+                        }}>
+                            {positions.map((position) => (
+                                <div
+                                    style={{
+                                        width: '30%', // Change this value to adjust the size of the boxes
+                                        cursor: 'pointer',
+                                        position: 'relative',
+                                        margin: '0 1%',
+                                    }}
+                                    onClick={() => {
+                                        loadScene(position.positions, setStickmen, setImages, setStickmanScales);
+                                        handleClose();
+                                    }}
+                                    onMouseEnter={() => {
+                                        const customImgElement = document.getElementById(`custom-image-${position.id}`);
+                                        const generatedImgElement = document.getElementById(`generated-image-${position.id}`);
+                                        const stickmanImgElement = document.getElementById(`stickman-image-${position.id}`);
+
+                                        if (customImgElement) {
+                                            customImgElement.style.opacity = "1";
+                                        }
+                                        if (generatedImgElement) {
+                                            generatedImgElement.style.opacity = "0.5"; // lower opacity to reduce brightness
+                                        }
+                                        if (stickmanImgElement) {
+                                            stickmanImgElement.style.opacity = "1";
+                                        }
+                                    }}
+                                    onMouseLeave={() => {
+                                        const customImgElement = document.getElementById(`custom-image-${position.id}`);
+                                        const generatedImgElement = document.getElementById(`generated-image-${position.id}`);
+                                        const stickmanImgElement = document.getElementById(`stickman-image-${position.id}`);
+
+                                        if (customImgElement) {
+                                            customImgElement.style.opacity = "0";
+                                        }
+                                        if (generatedImgElement) {
+                                            generatedImgElement.style.opacity = "1"; // restore opacity
+                                        }
+                                        if (stickmanImgElement) {
+                                            stickmanImgElement.style.opacity = "0.5";
+                                        }
+                                    }}
+                                >
+                                    <img
+                                        id={`generated-image-${position.id}`}
+                                        src={position.generatedImage}
+                                        alt="Generated"
+                                        style={{
+                                            width: '100%',
+                                            objectFit: 'contain',
+                                            transition: 'opacity 0.3s ease-in-out',
+                                            filter: isHovered === position.id ? 'brightness(50%)' : 'brightness(100%)'
+                                        }}
+                                        className="mb-3"
+                                    />
+                                    <img
+                                        id={`stickman-image-${position.id}`}
+                                        src={position.stickmanImage}
+                                        alt="Stickman"
+                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', objectFit: 'contain', opacity: 0.5, transition: 'opacity 0.3s ease-in-out' }}
+                                    />
+                                    <img
+                                        id={`custom-image-${position.id}`}
+                                        src={position.imageCustomImage}
+                                        alt="Custom"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            objectFit: 'contain',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease-in-out' // Added transition
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>Close</Button>
+                        <Button variant="primary" onClick={() => setPage(page + 1)} disabled={lastPage}>
+                            Next Page
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>

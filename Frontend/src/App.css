@@ -218,6 +218,10 @@
 
 }
 
+.generated-image:hover {
+  filter: brightness(50%);
+}
+
 
 
 /* ########### ########### ###########*/

@@ -14,7 +14,8 @@ import {
     getBase64Image,
     saveScene,
     loadScene,
-    addImage
+    addImage,
+    countElements
 } from './Utils/TestPageStickmanFunctions';
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
@@ -89,7 +90,6 @@ const PaintPage: React.FC = () => {
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
 
     // States for modals
@@ -182,6 +182,7 @@ const PaintPage: React.FC = () => {
                                     }}
                                     onClick={() => {
                                         loadScene(position.positions, setStickmen, setImages, setStickmanScales);
+                                        setUniqueIdCounter(countElements(position.positions))   
                                         handleClose();
                                     }}
                                     onMouseEnter={() => {
@@ -193,7 +194,8 @@ const PaintPage: React.FC = () => {
                                             customImgElement.style.opacity = "1";
                                         }
                                         if (generatedImgElement) {
-                                            generatedImgElement.style.opacity = "0.5"; // lower opacity to reduce brightness
+                                            generatedImgElement.style.filter = "brightness(20%)";
+                                            generatedImgElement.style.transition = "filter 0.3s ease-in-out"; // Added transition
                                         }
                                         if (stickmanImgElement) {
                                             stickmanImgElement.style.opacity = "1";
@@ -208,7 +210,8 @@ const PaintPage: React.FC = () => {
                                             customImgElement.style.opacity = "0";
                                         }
                                         if (generatedImgElement) {
-                                            generatedImgElement.style.opacity = "1"; // restore opacity
+                                            generatedImgElement.style.filter = "brightness(100%)";
+                                            generatedImgElement.style.transition = "filter 0.3s ease-in-out"; // Added transition
                                         }
                                         if (stickmanImgElement) {
                                             stickmanImgElement.style.opacity = "0.5";
@@ -222,8 +225,6 @@ const PaintPage: React.FC = () => {
                                         style={{
                                             width: '100%',
                                             objectFit: 'contain',
-                                            transition: 'opacity 0.3s ease-in-out',
-                                            filter: isHovered === position.id ? 'brightness(50%)' : 'brightness(100%)'
                                         }}
                                         className="mb-3"
                                     />

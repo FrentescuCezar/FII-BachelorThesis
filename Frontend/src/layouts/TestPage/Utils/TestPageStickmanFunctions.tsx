@@ -331,3 +331,22 @@ export const addImage = (
 
     image.src = urlBase64;
 };
+
+type PositionJson = {
+    stickmen: { id: number;[key: string]: any }[];
+    images: { id: number;[key: string]: any }[];
+};
+
+
+export function countElements(json: string): number {
+    // Parse the JSON into an object
+    const data: PositionJson = JSON.parse(json);
+
+    // The total count is the sum of the lengths of the stickmen and images arrays
+    
+    const totalCount = data.stickmen.length + data.images.length;
+    
+    console.log(totalCount)
+
+    return totalCount;
+}

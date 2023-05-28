@@ -15,19 +15,17 @@ import {
     saveScene,
     loadScene,
     addImage,
-    countElements
 } from './Utils/TestPageStickmanFunctions';
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
 import { submitPositions } from './Api/PosingApi';
-import { Button, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import DepthMapModal from './Components/DepthMaps/DepthMapModal';
-import { Positions } from '../../models/PositionsModel';
+import { PositionsModal } from './Components/Positions/PositionsModal';
 
 const PaintPage: React.FC = () => {
 
     const { authState } = useOktaAuth();
-    console.log(authState)
 
     const [stickmen, setStickmen] = useState<{
         id: number;
@@ -71,7 +69,7 @@ const PaintPage: React.FC = () => {
     const [submitClicked, setSubmitClicked] = useState(false);
 
     // Handle onSubmit - set both images and set submitClicked to true
-    const handleOnSubmit = () => {
+    const handleOnSubmitPosition = () => {
         getBase64Image(stageRef, imageBase64, setImageBase64, images.map(image => image.id));
         getBase64Image(stageRef, stickmanBase64, setStickmanBase64, stickmen.map(stickman => stickman.id));
         saveScene(stickmen, images, stickmanScales, setSceneJson)
@@ -86,12 +84,6 @@ const PaintPage: React.FC = () => {
     }, [submitClicked, imageBase64, stickmanBase64]);
 
 
-
-
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-
-
     // States for modals
     const [showDepthMap, setShowDepthMap] = useState(false);
     const [showPositions, setShowPositions] = useState(false);
@@ -103,36 +95,6 @@ const PaintPage: React.FC = () => {
     const handleClosePositions = () => setShowPositions(false);
     const handleShowPositions = () => setShowPositions(true);
 
-
-
-
-
-
-    const [page, setPage] = useState(0);
-    const [positions, setPositions] = useState<Positions[]>([]);
-    const [lastPage, setLastPage] = useState(false);
-    useEffect(() => {
-        if (!authState || !authState.accessToken) return;
-
-        fetch(`http://localhost:8081/api/positions/recentByUsername?page=${page}&size=3`, {
-            headers: {
-                Authorization: `Bearer ${authState.accessToken.accessToken}`,
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setPositions(data.content);
-                setPage(data.number);  // current page
-                setLastPage(data.last);  // last page
-            })
-            .catch((err) => console.error(err));
-    }, [page, authState]);
-
-
-    const [isHovered, setIsHovered] = useState<number | null>(null);
-
-
-
     return (
         <div>
             <div>
@@ -140,7 +102,7 @@ const PaintPage: React.FC = () => {
                 <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
                 <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
                 <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
-                <button onClick={handleOnSubmit}>Submit Position</button>
+                <button onClick={handleOnSubmitPosition}>Submit Position</button>
 
                 <Button variant="primary" onClick={handleShowDepthMap}>
                     Load DepthMaps
@@ -162,103 +124,18 @@ const PaintPage: React.FC = () => {
 
 
 
-                <Modal show={showPositions} style={{ maxWidth: '90%' }} onHide={handleClosePositions}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Load Positions</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'flex-start',
-                        }}>
-                            {positions.map((position) => (
-                                <div
-                                    style={{
-                                        width: '30%', // Change this value to adjust the size of the boxes
-                                        cursor: 'pointer',
-                                        position: 'relative',
-                                        margin: '0 1%',
-                                    }}
-                                    onClick={() => {
-                                        loadScene(position.positions, setStickmen, setImages, setStickmanScales);
-                                        setUniqueIdCounter(countElements(position.positions))   
-                                        handleClose();
-                                    }}
-                                    onMouseEnter={() => {
-                                        const customImgElement = document.getElementById(`custom-image-${position.id}`);
-                                        const generatedImgElement = document.getElementById(`generated-image-${position.id}`);
-                                        const stickmanImgElement = document.getElementById(`stickman-image-${position.id}`);
+                <PositionsModal
+                    authState={authState}
+                    submitClicked={submitClicked}
+                    showPositions={showPositions}
+                    handleClosePositions={handleClosePositions}
+                    setStickmen={setStickmen}
+                    setImages={setImages}
+                    setStickmanScales={setStickmanScales}
+                    setUniqueIdCounter={setUniqueIdCounter}
+                    loadScene={loadScene}
+                />
 
-                                        if (customImgElement) {
-                                            customImgElement.style.opacity = "1";
-                                        }
-                                        if (generatedImgElement) {
-                                            generatedImgElement.style.filter = "brightness(20%)";
-                                            generatedImgElement.style.transition = "filter 0.3s ease-in-out"; // Added transition
-                                        }
-                                        if (stickmanImgElement) {
-                                            stickmanImgElement.style.opacity = "1";
-                                        }
-                                    }}
-                                    onMouseLeave={() => {
-                                        const customImgElement = document.getElementById(`custom-image-${position.id}`);
-                                        const generatedImgElement = document.getElementById(`generated-image-${position.id}`);
-                                        const stickmanImgElement = document.getElementById(`stickman-image-${position.id}`);
-
-                                        if (customImgElement) {
-                                            customImgElement.style.opacity = "0";
-                                        }
-                                        if (generatedImgElement) {
-                                            generatedImgElement.style.filter = "brightness(100%)";
-                                            generatedImgElement.style.transition = "filter 0.3s ease-in-out"; // Added transition
-                                        }
-                                        if (stickmanImgElement) {
-                                            stickmanImgElement.style.opacity = "0.5";
-                                        }
-                                    }}
-                                >
-                                    <img
-                                        id={`generated-image-${position.id}`}
-                                        src={position.generatedImage}
-                                        alt="Generated"
-                                        style={{
-                                            width: '100%',
-                                            objectFit: 'contain',
-                                        }}
-                                        className="mb-3"
-                                    />
-                                    <img
-                                        id={`stickman-image-${position.id}`}
-                                        src={position.stickmanImage}
-                                        alt="Stickman"
-                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', objectFit: 'contain', opacity: 0.5, transition: 'opacity 0.3s ease-in-out' }}
-                                    />
-                                    <img
-                                        id={`custom-image-${position.id}`}
-                                        src={position.imageCustomImage}
-                                        alt="Custom"
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            objectFit: 'contain',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease-in-out' // Added transition
-                                        }}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>Close</Button>
-                        <Button variant="primary" onClick={() => setPage(page + 1)} disabled={lastPage}>
-                            Next Page
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
 
                 <Stage ref={stageRef} width={512} height={512}>
                     <Layer>

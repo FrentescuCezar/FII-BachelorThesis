@@ -78,9 +78,12 @@ public class StableDiffusionController {
         return depthMapService.findAll();
     }
 
+
     @GetMapping("/depthmaps/category/{category}")
-    public List<DepthMap> findDepthMapsByCategory(@PathVariable Category category) {
-        return depthMapService.findByCategory(category);
+    public Page<DepthMap> findDepthMapsByCategory(@PathVariable Category category,
+                                                  @RequestParam("page") int page,
+                                                  @RequestParam("size") int size) {
+        return depthMapService.findByCategory(category, page, size);
     }
 
 }

@@ -223,6 +223,15 @@
 }
 
 
+.depthmap-box {
+  background-color: white;
+}
+
+.depthmap-box:hover {
+  background-color: #cecece;
+  /* Bootstrap's light gray */
+}
+
 
 /* ########### ########### ###########*/
 

@@ -51,7 +51,7 @@ export const PositionsModal: React.FC<PositionsModalProps> = ({
     }, [submitClicked, showPositions, currentPage, authState]);
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-    return (<Modal show={showPositions} style={{ maxWidth: '90%' }} onHide={handleClosePositions}>
+    return (<Modal show={showPositions} style={{ maxWidth: '100%', maxHeight: '100%' }} onHide={handleClosePositions}>
         <Modal.Header closeButton>
             <Modal.Title>Load Positions</Modal.Title>
         </Modal.Header>
@@ -63,11 +63,12 @@ export const PositionsModal: React.FC<PositionsModalProps> = ({
             }}>
                 {positions.map((position) => (
                     <div
+                        key={position.id}
                         style={{
-                            width: '30%', // Change this value to adjust the size of the boxes
+                            width: '32%', // Change this value to adjust the size of the boxes
                             cursor: 'pointer',
                             position: 'relative',
-                            margin: '0 1%',
+                            margin: '0 0.65%', // Reduced margin to adjust the width
                         }}
                         onClick={() => {
                             loadScene(position.positions, setStickmen, setImages, setStickmanScales);

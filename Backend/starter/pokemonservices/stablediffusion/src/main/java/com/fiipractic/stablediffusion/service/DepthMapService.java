@@ -1,13 +1,16 @@
 package com.fiipractic.stablediffusion.service;
 
 import com.fiipractic.stablediffusion.model.DepthMap;
+import com.fiipractic.stablediffusion.model.Positions;
 import com.fiipractic.stablediffusion.repository.DepthMapRepository;
 import com.fiipractic.stablediffusion.utils.Category;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 
 @Service
@@ -23,7 +26,8 @@ public class DepthMapService {
         return repository.findAll();
     }
 
-    public List<DepthMap> findByCategory(Category category) {
-        return repository.findByCategory(category);
+    public Page<DepthMap> findByCategory(Category category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findByCategory(category,pageable);
     }
 }

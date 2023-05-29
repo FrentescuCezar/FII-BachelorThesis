@@ -30,7 +30,6 @@ const DepthMapModal: React.FC<DepthMapModalProps> = ({ show, handleClose, addIma
     async function fetchCategories() {
         const res = await fetch("http://localhost:8081/api/depthmaps");
         const data = await res.json();
-        console.log(data)
 
         const categories = Array.from(new Set<string>(data.map((item: DepthMap) => item.category)));
         setCategories(categories);

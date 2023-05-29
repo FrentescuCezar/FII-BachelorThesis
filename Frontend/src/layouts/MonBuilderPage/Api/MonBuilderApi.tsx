@@ -7,15 +7,20 @@ import PoketexRequestModel from '../../../models/PoketexRequestModel'
 export async function submitPrompt(
     steps: number,
     prompt: string,
+    sampler_index: string,
     setIsImageLoading: (loading: boolean) => void,
     setImageData: (data: string) => void,
     setSeed: (seed: number) => void,
     seed?: number,
-    negativePrompt?: string
+    negative_prompts?: string,
+    alwayson_scripts?: any
+
 ) {
     setIsImageLoading(true);
-    const imageRequestModel = new ImageRequestModel(steps, prompt, seed, negativePrompt);
+    const imageRequestModel = new ImageRequestModel(steps, prompt, sampler_index, seed, negative_prompts, alwayson_scripts);
     const url = `http://localhost:8081/api/textToImage`;
+    console.log(JSON.stringify(imageRequestModel))
+
     const requestOptions = {
         method: "POST",
         headers: {

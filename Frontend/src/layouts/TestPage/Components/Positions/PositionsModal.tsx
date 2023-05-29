@@ -72,7 +72,7 @@ export const PositionsModal: React.FC<PositionsModalProps> = ({
                         }}
                         onClick={() => {
                             loadScene(position.positions, setStickmen, setImages, setStickmanScales);
-                            setUniqueIdCounter(countElements(position.positions))
+                            setUniqueIdCounter(countElements(position.positions));
                         }}
                         onMouseEnter={() => {
                             const customImgElement = document.getElementById(`custom-image-${position.id}`);

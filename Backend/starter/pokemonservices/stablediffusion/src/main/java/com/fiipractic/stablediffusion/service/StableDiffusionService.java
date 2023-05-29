@@ -56,6 +56,7 @@ public class StableDiffusionService {
             json = jsonNode.toString();
         } else {
             json = objectMapper.writeValueAsString(request);
+            System.out.println(json);
         }
 
         HttpEntity<String> entity = new HttpEntity<>(json, headers);

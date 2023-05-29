@@ -9,6 +9,10 @@ import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon 
 
 
 import image from "../../Images/PublicImages/MonBuilderImage.png"
+import PaintPage from "../TestPage/TestPage";
+import { StickmanScalesProvider } from "../TestPage/Utils/StickmanScalesProvider";
+import { AlwaysonScripts, ScriptArgs } from "../../models/TextToImageRequestModel";
+import { createImageWithBackground } from "../TestPage/Utils/TestPageStickmanFunctions";
 
 
 export const MonBuilderPage = () => {
@@ -20,7 +24,7 @@ export const MonBuilderPage = () => {
     // Prompt and steps states
     const [prompt, setPrompt] = useState("");
     const [steps, setSteps] = useState(20);
-    const [seedInput, setSeedInput] = useState("");
+    const [seedInput, setSeedInput] = useState("-1");
     const [negativePrompt, setNegativePrompt] = useState("");
 
     // Final prompt and steps states
@@ -29,7 +33,7 @@ export const MonBuilderPage = () => {
 
     // Generated image states
     const [imageData, setImageData] = useState("");
-    const [seed, setSeed] = useState(0);
+    const [seed, setSeed] = useState(-1);
     const generation = 0;
 
     // Pokemon name and description states
@@ -46,11 +50,22 @@ export const MonBuilderPage = () => {
 
 
 
+    const [imageOfStickmen, setImageOfStickmen] = useState("");
+    const [imageOfDepthMaps, setimageOfDepthMaps] = useState("");
 
+    useEffect(() => {
+        if (imageOfStickmen != "") {
+            createImageWithBackground(imageOfStickmen).then(imageWithBackground => {
+                setImageOfStickmen(imageWithBackground)
+            });
+        }
 
-
-
-
+        if (imageOfDepthMaps != "") {
+            createImageWithBackground(imageOfDepthMaps).then(imageWithBackground => {
+                setimageOfDepthMaps(imageWithBackground)
+            });
+        }
+    }, [imageOfStickmen, imageOfDepthMaps])
 
     const handleSubmit = () => {
         if (!prompt) {
@@ -62,27 +77,62 @@ export const MonBuilderPage = () => {
         setFinalSteps(steps);
         setPokemonDescription("");
         setPokemonName("");
+
+
+
+
+        // Define the arguments for the scripts
+        const arg1: ScriptArgs = {
+            input_image: imageOfStickmen,
+            module: "none",
+            model: "control_v11p_sd15_openpose [cab727d4]",
+            resize_mode: 1,
+            weight: 1,
+        };
+
+        const arg2: ScriptArgs = {
+            input_image: imageOfDepthMaps,
+            module: "none",
+            model: "control_v11f1p_sd15_depth [cfd03158]",
+            resize_mode: 1,
+            weight: 1,
+        };
+
+        // Combine the arguments into the scripts object
+        const alwaysonScripts: AlwaysonScripts = {
+            controlnet: {
+                args: [arg1, arg2],
+            },
+        };
+
+        const sampler_index = "Euler a";
+
+
         submitPrompt(
             steps,
             prompt,
+            sampler_index,
             setIsImageLoading,
             setImageData,
             setSeed,
             seedInput ? parseInt(seedInput) : undefined,
-            negativePrompt
+            negativePrompt,
+            alwaysonScripts
         );
     };
-
-
-    console.log(pokemonDescription)
-
-
 
     return (
         <div className='my-5'>
             <Container>
                 <Row>
                     <Col>
+                        <StickmanScalesProvider>
+                            <PaintPage
+                                setImageOfStickmen={setImageOfStickmen}
+                                setimageOfDepthMaps={setimageOfDepthMaps}
+                                generatedImage = {imageData}
+                            />
+                        </StickmanScalesProvider>
                         <Form>
                             <Form.Group controlId="prompt">
                                 <Form.Label>Prompt:</Form.Label>

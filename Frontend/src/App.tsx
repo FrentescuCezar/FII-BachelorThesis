@@ -73,14 +73,6 @@ export const App = () => {
             <Route path='/login/callback' component={LoginCallback} />
 
 
-
-            <Route path='/testpage'>
-              <StickmanScalesProvider>
-                <TestPage />
-              </StickmanScalesProvider>
-            </Route>
-
-
             <Route path='/user/:userName/pokemon/:parent1/'>
               <BreedingPage />
             </Route>

@@ -7,7 +7,7 @@ import lombok.Data;
 public class ImageToImageRequest {
     private String image;
     private String prompt;
-    private String negativePrompt;
+    private String negative_prompts;
     private Integer steps;
     private Long seed;
 }

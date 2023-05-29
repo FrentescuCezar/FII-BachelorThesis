@@ -29,6 +29,8 @@ public class PositionsService {
         positions.setPositions(positionsRequest.getPositions());
         positions.setStickmanImage(positionsRequest.getStickmanImage());
         positions.setImageCustomImage(positionsRequest.getImageCustomImage());
+        positions.setGeneratedImage(positionsRequest.getGeneratedImage());  // set generatedImage
+
 
         int atSymbolIndex = username.indexOf('@');
         if (atSymbolIndex >= 0)

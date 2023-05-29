@@ -85,7 +85,7 @@ export const bringBackward = (selectedNode: Konva.Node | null) => {
 
 
 
-export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, base64Image: string, setBase64Image: React.Dispatch<React.SetStateAction<string>>, nodesToInclude: number[]): string => {
+export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, setBase64Image: React.Dispatch<React.SetStateAction<string>>, nodesToInclude: number[]): string => {
     if (!stageRef.current) {
         setBase64Image('')
         return '';
@@ -145,7 +145,39 @@ export const getBase64Image = (stageRef: React.RefObject<Konva.Stage>, base64Ima
 
 
 
+export function createImageWithBackground(base64: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        // Create new canvas element
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
 
+        // Get context
+        const context = canvas.getContext('2d');
+        if (!context) {
+            reject(new Error("Failed to get canvas context."));
+            return;
+        }
+
+        // Draw black background
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Load image
+        const img = new Image();
+        img.onload = () => {
+            // Draw image onto canvas
+            context.drawImage(img, 0, 0, 512, 512);
+            // Convert canvas to base64
+            const imageWithBackground = canvas.toDataURL("image/png");
+            resolve(imageWithBackground);
+        };
+        img.onerror = (error) => {
+            reject(error);
+        };
+        img.src = base64;
+    });
+}
 
 
 
@@ -219,15 +251,15 @@ export const saveScene = (
     setSceneJson(newSceneJson);
 
     // Create a Blob object from the JSON string
-    const blob = new Blob([newSceneJson], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    // Create a link element, set the download attribute and click it
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'scene.json';
-    link.click();
-    console.log(newSceneJson);
+    //const blob = new Blob([newSceneJson], { type: 'application/json' });
+    //const url = URL.createObjectURL(blob);
+    //
+    //// Create a link element, set the download attribute and click it
+    //const link = document.createElement('a');
+    //link.href = url;
+    //link.download = 'scene.json';
+    //link.click();
+    //console.log(newSceneJson);
 };
 
 export const loadScene = (

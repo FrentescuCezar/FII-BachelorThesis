@@ -15,6 +15,7 @@ import {
     saveScene,
     loadScene,
     addImage,
+    createImageWithBackground,
 } from './Utils/TestPageStickmanFunctions';
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
@@ -23,7 +24,14 @@ import { Button } from 'react-bootstrap';
 import DepthMapModal from './Components/DepthMaps/DepthMapModal';
 import { PositionsModal } from './Components/Positions/PositionsModal';
 
-const PaintPage: React.FC = () => {
+type imagesProps = {
+    setImageOfStickmen: React.Dispatch<React.SetStateAction<string>>,
+    setimageOfDepthMaps: React.Dispatch<React.SetStateAction<string>>,
+    generatedImage: string
+};
+
+
+const PaintPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthMaps, generatedImage }) => {
 
     const { authState } = useOktaAuth();
 
@@ -70,15 +78,30 @@ const PaintPage: React.FC = () => {
 
     // Handle onSubmit - set both images and set submitClicked to true
     const handleOnSubmitPosition = () => {
-        getBase64Image(stageRef, imageBase64, setImageBase64, images.map(image => image.id));
-        getBase64Image(stageRef, stickmanBase64, setStickmanBase64, stickmen.map(stickman => stickman.id));
+        getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
+        getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
         saveScene(stickmen, images, stickmanScales, setSceneJson)
         setSubmitClicked(true);
     };
 
     useEffect(() => {
+        getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
+        getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
+        saveScene(stickmen, images, stickmanScales, setSceneJson)
+    }, [stickmen, images])
+
+
+    useEffect(() => {
+
+        if (stickmanBase64) {
+            setImageOfStickmen(stickmanBase64)
+        }
+        if (imageBase64) {
+            setimageOfDepthMaps(imageBase64)
+        }
+
         if (submitClicked && (imageBase64 || stickmanBase64)) {
-            submitPositions(sceneJson, stickmanBase64, imageBase64, authState);
+            submitPositions(sceneJson, stickmanBase64, imageBase64, generatedImage, authState);
             setSubmitClicked(false);  // reset after submission
         }
     }, [submitClicked, imageBase64, stickmanBase64]);

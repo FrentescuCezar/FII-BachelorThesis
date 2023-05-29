@@ -3,8 +3,8 @@ server:
 
 api:
   base-url:
-    txt2imgUrl: http://127.0.0.1:7861/sdapi/v1/txt2img
-    img2imgUrl: http://127.0.0.1:7861/sdapi/v1/img2img
+    txt2imgUrl: http://127.0.0.1:7860/sdapi/v1/txt2img
+    img2imgUrl: http://127.0.0.1:7860/sdapi/v1/img2img
 
 spring:
   application:

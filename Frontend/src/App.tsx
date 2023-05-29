@@ -18,7 +18,7 @@ import { CommentListPage } from './layouts/PoketexPage/Components/Comments/Comme
 import MonBuilderPage from './layouts/MonBuilderPage/MonBuilderPage';
 import { UserPage } from './layouts/UserPage/UserPage';
 import { BreedingPage } from './layouts/BreedingPage/BreedingPage';
-import TestPage from './layouts/TestPage/TestPage';
+import TestPage from './layouts/TestPage/StickmanPage';
 import { StickmanScalesProvider } from './layouts/TestPage/Utils/StickmanScalesProvider';
 
 

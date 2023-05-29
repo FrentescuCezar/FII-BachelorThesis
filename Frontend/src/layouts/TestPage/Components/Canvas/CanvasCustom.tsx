@@ -17,7 +17,7 @@ interface CanvasProps {
     bufferDimensions: { width: number; height: number };
 }
 
-const CanvasStable: React.FC<CanvasProps> = ({ color,
+const CanvasCustom: React.FC<CanvasProps> = ({ color,
     brushSize,
     tool,
     undo,
@@ -116,6 +116,16 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
 
 
 
+    function hexToRgb(hex: string) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+            ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16),
+            }
+            : null;
+    }
 
     const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
         updateBrushSizeIndicator(event);
@@ -244,4 +254,4 @@ const CanvasStable: React.FC<CanvasProps> = ({ color,
         </div>
     );
 }
-export default CanvasStable;
+export default CanvasCustom;

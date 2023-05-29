@@ -16,7 +16,7 @@ import {
     loadScene,
     addImage,
     createImageWithBackground,
-} from './Utils/TestPageStickmanFunctions';
+} from './Utils/StickmanPageFunctions';
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
 import { submitPositions } from './Api/PosingApi';

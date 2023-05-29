@@ -9,10 +9,11 @@ import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon 
 
 
 import image from "../../Images/PublicImages/MonBuilderImage.png"
-import PaintPage from "../TestPage/TestPage";
+import PaintPage from "../TestPage/StickmanPage";
 import { StickmanScalesProvider } from "../TestPage/Utils/StickmanScalesProvider";
 import { AlwaysonScripts, ScriptArgs } from "../../models/TextToImageRequestModel";
-import { createImageWithBackground } from "../TestPage/Utils/TestPageStickmanFunctions";
+import { createImageWithBackground } from "../TestPage/Utils/StickmanPageFunctions";
+import { CanvasPage } from "../TestPage/Components/Canvas/CanvasPage";
 
 
 export const MonBuilderPage = () => {
@@ -121,18 +122,44 @@ export const MonBuilderPage = () => {
         );
     };
 
+
+
+    const [activePage, setActivePage] = useState("CanvasPage");
+    const [isControlNetEnabled, setControlNetEnabled] = useState(false);
+
+
     return (
         <div className='my-5'>
             <Container>
                 <Row>
                     <Col>
-                        <StickmanScalesProvider>
-                            <PaintPage
-                                setImageOfStickmen={setImageOfStickmen}
-                                setimageOfDepthMaps={setimageOfDepthMaps}
-                                generatedImage = {imageData}
+                        <Form.Group controlId="controlNetCheckbox">
+                            <Form.Check
+                                type="checkbox"
+                                label="Enable ControlNet"
+                                checked={isControlNetEnabled}
+                                onChange={() => setControlNetEnabled(!isControlNetEnabled)}
                             />
-                        </StickmanScalesProvider>
+                        </Form.Group>
+
+                        <div style={{ display: isControlNetEnabled ? "block" : "none" }}>
+                            <Button onClick={() => setActivePage("CanvasPage")}>Canvas Page</Button>
+                            <Button onClick={() => setActivePage("PaintPage")}>Paint Page</Button>
+
+                            <div style={{ display: activePage === "CanvasPage" ? "block" : "none" }}>
+                                <CanvasPage />
+                            </div>
+                            <div style={{ display: activePage === "PaintPage" ? "block" : "none" }}>
+                                <StickmanScalesProvider>
+                                    <PaintPage
+                                        setImageOfStickmen={setImageOfStickmen}
+                                        setimageOfDepthMaps={setimageOfDepthMaps}
+                                        generatedImage={imageData}
+                                    />
+                                </StickmanScalesProvider>
+                            </div>
+                        </div>
+
                         <Form>
                             <Form.Group controlId="prompt">
                                 <Form.Label>Prompt:</Form.Label>

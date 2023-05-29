@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap'; // Assuming react-bootstrap is being used.
 import { Pagination } from '../../../Utils/Pagination';
-import { countElements } from '../../Utils/TestPageStickmanFunctions';
+import { countElements } from '../../Utils/StickmanPageFunctions';
 import { Positions } from '../../../../models/PositionsModel';
 
 export type PositionsModalProps = {

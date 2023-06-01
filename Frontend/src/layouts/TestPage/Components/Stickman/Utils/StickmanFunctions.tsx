@@ -74,8 +74,6 @@ export const dragBound = (
   const newX = Math.max(minX, Math.min(maxX, pos.x));
   const newY = Math.max(minY, Math.min(maxY, pos.y));
 
-  console.log('pos:', pos, 'newPos:', { x: newX, y: newY });
-
 
   // Check if the cursor is out of bounds
   if (pos.x < minX || pos.x > maxX || pos.y < minY || pos.y > maxY) {

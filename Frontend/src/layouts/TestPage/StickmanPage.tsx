@@ -100,7 +100,11 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
     };
 
     useEffect(() => {
+        console.log(images);
+
         if (updateJointBug == false) {
+            setImageOfStickmen("");
+            setimageOfDepthMaps("");
             getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
             getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
             saveScene(stickmen, images, stickmanScales, setSceneJson)
@@ -112,9 +116,12 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
 
         if (stickmanBase64) {
             setImageOfStickmen(stickmanBase64)
+            getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
+
         }
         if (imageBase64) {
             setimageOfDepthMaps(imageBase64)
+            getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
         }
 
         if (submitClicked && (imageBase64 || stickmanBase64)) {
@@ -184,7 +191,9 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
                         enterDelay={1000}
                         placement="right"
                     >
-                        <button style={{ width: '45px', height: '45px' }} onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>
+                        <button style={{ width: '45px', height: '45px' }} onClick={() => {
+                            removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages);
+                        }}>
                             <IoTrashBinSharp size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
                         </button>
                     </Tooltip>

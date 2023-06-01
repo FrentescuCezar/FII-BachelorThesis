@@ -13,8 +13,6 @@ export async function submitPositions(
 
     const url = `http://localhost:8081/api/positions/addPosition`;
 
-    console.log(JSON.stringify(poketexRequestModel))
-
 
     const requestOptons = {
         method: 'POST',

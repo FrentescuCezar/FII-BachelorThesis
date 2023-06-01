@@ -19,7 +19,6 @@ export async function submitPrompt(
     setIsImageLoading(true);
     const imageRequestModel = new ImageRequestModel(steps, prompt, sampler_index, seed, negative_prompts, alwayson_scripts);
     const url = `http://localhost:8081/api/textToImage`;
-    console.log(JSON.stringify(imageRequestModel))
 
     const requestOptions = {
         method: "POST",
@@ -32,6 +31,8 @@ export async function submitPrompt(
     try {
         const response = await fetch(url, requestOptions);
         const data = await response.json();
+
+        console.log(data)
 
         if (!response.ok) {
             throw new Error("Something went wrong!");

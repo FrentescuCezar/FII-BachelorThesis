@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useOktaAuth } from '@okta/okta-react';
 import { useHistory } from "react-router-dom";
 
-import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 
 import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon } from "./Api/MonBuilderApi";
@@ -55,13 +55,13 @@ export const MonBuilderPage = () => {
     const [imageOfDepthMaps, setimageOfDepthMaps] = useState("");
 
     useEffect(() => {
-        if (imageOfStickmen != "") {
+        if (imageOfStickmen !== "") {
             createImageWithBackground(imageOfStickmen).then(imageWithBackground => {
                 setImageOfStickmen(imageWithBackground)
             });
         }
 
-        if (imageOfDepthMaps != "") {
+        if (imageOfDepthMaps !== "") {
             createImageWithBackground(imageOfDepthMaps).then(imageWithBackground => {
                 setimageOfDepthMaps(imageWithBackground)
             });
@@ -88,7 +88,7 @@ export const MonBuilderPage = () => {
             module: "none",
             model: "control_v11p_sd15_openpose [cab727d4]",
             resize_mode: 1,
-            weight: 1,
+            weight: stickmenControlNetSetting,
         };
 
         const arg2: ScriptArgs = {
@@ -96,15 +96,42 @@ export const MonBuilderPage = () => {
             module: "none",
             model: "control_v11f1p_sd15_depth [cfd03158]",
             resize_mode: 1,
-            weight: 1,
+            weight: depthmapsControlNetSetting,
         };
 
+
+        let alwaysonScripts: AlwaysonScripts;
+        if (activePage === "PaintPage") {
+            if (imageOfStickmen !== "" && imageOfDepthMaps !== "") {
+                alwaysonScripts = {
+                    controlnet: {
+                        args: [arg1, arg2],
+                    },
+                };
+            } else if (imageOfStickmen !== "") {
+                alwaysonScripts = {
+                    controlnet: {
+                        args: [arg1],
+                    },
+                };
+            } else {
+                alwaysonScripts = {
+                    controlnet: {
+                        args: [arg2],
+                    },
+                };
+            }
+        } else {
+            alwaysonScripts = {
+                controlnet: {
+                    args: [arg1],
+                },
+            };
+        }
+
+
         // Combine the arguments into the scripts object
-        const alwaysonScripts: AlwaysonScripts = {
-            controlnet: {
-                args: [arg1, arg2],
-            },
-        };
+
 
         const sampler_index = "Euler a";
 
@@ -126,6 +153,9 @@ export const MonBuilderPage = () => {
 
     const [activePage, setActivePage] = useState("CanvasPage");
     const [isControlNetEnabled, setControlNetEnabled] = useState(false);
+    const [stickmenControlNetSetting, setStickmenControlNetSetting] = useState(1);
+    const [depthmapsControlNetSetting, setDepthmapsControlNetSetting] = useState(1);
+
 
 
     return (
@@ -165,6 +195,8 @@ export const MonBuilderPage = () => {
                                         setImageOfStickmen={setImageOfStickmen}
                                         setimageOfDepthMaps={setimageOfDepthMaps}
                                         generatedImage={imageData}
+                                        setStickmenControlNetSetting={setStickmenControlNetSetting}
+                                        setDepthmapsControlNetSetting={setDepthmapsControlNetSetting}
                                     />
                                 </StickmanScalesProvider>
                             </div>

@@ -29,6 +29,7 @@ import { IoPersonAdd, IoTrashBinSharp } from 'react-icons/io5';
 import { BsLayerForward, BsLayerBackward } from 'react-icons/bs';
 import { GiBowman, GiArmoredPants } from 'react-icons/gi';
 import { RiSave3Fill } from 'react-icons/ri';
+import { FiSettings } from 'react-icons/fi';
 
 import Tooltip from '@mui/material/Tooltip';
 
@@ -36,6 +37,7 @@ import AddStickmanGIF from "../../../src/Images/StickmenImage/AddStickman.gif"
 import RemoveStickmanGIF from "../../../src/Images/StickmenImage/RemoveStickman.gif"
 import ForwardStickmanGIF from "../../../src/Images/StickmenImage/ForwardStickman.gif"
 import BackwardsStickmanGIF from "../../../src/Images/StickmenImage/BackwardsStickman.gif"
+import OptionsModal from './Components/Options/Options';
 
 
 
@@ -43,10 +45,15 @@ type imagesProps = {
     setImageOfStickmen: React.Dispatch<React.SetStateAction<string>>,
     setimageOfDepthMaps: React.Dispatch<React.SetStateAction<string>>,
     generatedImage: string
+    setStickmenControlNetSetting: React.Dispatch<React.SetStateAction<number>>;
+    setDepthmapsControlNetSetting: React.Dispatch<React.SetStateAction<number>>;
 };
 
 
-const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthMaps, generatedImage }) => {
+const StickmanPage: React.FC<imagesProps> = ({
+    setImageOfStickmen, setimageOfDepthMaps, generatedImage,
+    setStickmenControlNetSetting, setDepthmapsControlNetSetting
+}) => {
 
     const { authState } = useOktaAuth();
 
@@ -102,7 +109,7 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
     useEffect(() => {
         console.log(images);
 
-        if (updateJointBug == false) {
+        if (updateJointBug === false) {
             setImageOfStickmen("");
             setimageOfDepthMaps("");
             getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
@@ -113,15 +120,13 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
 
 
     useEffect(() => {
-
         if (stickmanBase64) {
-            setImageOfStickmen(stickmanBase64)
             getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
-
+            setImageOfStickmen(stickmanBase64)
         }
         if (imageBase64) {
-            setimageOfDepthMaps(imageBase64)
             getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
+            setimageOfDepthMaps(imageBase64)
         }
 
         if (submitClicked && (imageBase64 || stickmanBase64)) {
@@ -134,6 +139,7 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
     // States for modals
     const [showDepthMap, setShowDepthMap] = useState(false);
     const [showPositions, setShowPositions] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
 
     // Handlers for modals
     const handleCloseDepthMap = () => setShowDepthMap(false);
@@ -142,6 +148,8 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
     const handleClosePositions = () => setShowPositions(false);
     const handleShowPositions = () => setShowPositions(true);
 
+    const handleCloseOptions = () => setShowOptions(false);
+    const handleShowOptions = () => setShowOptions(true);
 
     const [updateJointBug, setUpdateJointBug] = useState(false);
 
@@ -258,6 +266,12 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
                         </button>
                     </Tooltip>
 
+                    <Tooltip title={<p style={{ textAlign: 'center', marginTop: '15px', fontSize: '16px' }}>Settings</p>} placement="right">
+                        <button style={{ width: '45px', height: '45px' }} onClick={handleShowOptions}>
+                            <FiSettings size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
+
 
                 </div>
                 <DepthMapModal
@@ -282,6 +296,13 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
                     setStickmanScales={setStickmanScales}
                     setUniqueIdCounter={setUniqueIdCounter}
                     loadScene={loadScene}
+                />
+
+                <OptionsModal
+                    show={showOptions}
+                    handleClose={handleCloseOptions}
+                    setDepthmapsControlNetSetting={setDepthmapsControlNetSetting}
+                    setStickmenControlNetSetting={setStickmenControlNetSetting}
                 />
 
 
@@ -368,6 +389,7 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
                                         ...stickmanScales,
                                         [id]: { scaleX: newScaleX, scaleY: newScaleY, rotation: stickmanScales[id]?.rotation || 0 },
                                     });
+
                                 }}
                                 onRotateChange={handleRotateChange} // new callback
                             />

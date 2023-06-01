@@ -1,6 +1,5 @@
 import Konva from 'konva';
-import { colors } from '../Colors';
-import { Group, Circle, Ellipse } from 'react-konva';
+import { Ellipse } from 'react-konva';
 
 export const handleJointDrag = (
   stickmanGroupRef: React.RefObject<Konva.Group>,

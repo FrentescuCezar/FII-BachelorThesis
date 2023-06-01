@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SketchPicker, ColorResult } from 'react-color';
-import { FaPencilAlt, FaEraser, FaSave, FaUndo, FaRedo } from 'react-icons/fa';
+import { FaPencilAlt, FaEraser, FaSave, FaUndo, FaRedo, FaImage } from 'react-icons/fa';
 
 interface ToolbarProps {
     color: string;
@@ -11,6 +11,9 @@ interface ToolbarProps {
     setTool: (tool: 'pen' | 'eraser') => void;
     undo: () => void;
     redo: () => void;
+    saveBase64Image: () => void;
+    handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+
 }
 
 const ToolbarStable: React.FC<ToolbarProps> = ({
@@ -21,7 +24,9 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
     tool,
     setTool,
     undo,
-    redo
+    redo,
+    saveBase64Image,
+    handleImageUpload
 }) => {
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -36,6 +41,9 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
     const handleBrushSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setBrushSize(Number(event.target.value));
     };
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
 
     return (
         <div>
@@ -95,9 +103,26 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
                     style={{ verticalAlign: 'middle' }}
                 />
             </button>
-            <button>
+            <button onClick={saveBase64Image}>
                 <FaSave size={24} style={{ verticalAlign: 'middle' }} />
             </button>
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleImageUpload}
+            />
+            <button
+                onClick={() => {
+                    if (fileInputRef.current) {
+                        fileInputRef.current.click();
+                    }
+                }}
+            >
+                <FaImage size={24} style={{ verticalAlign: 'middle' }} />
+            </button>
+
         </div>
     );
 };

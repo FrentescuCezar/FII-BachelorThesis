@@ -19,9 +19,14 @@ interface StickmanProps {
     onDragEnd: (id: number, newX: number, newY: number) => void;  // Add this line
     onScaleChange: (id: number, newScaleX: number, newScaleY: number) => void;
     onRotateChange: (id: number, newRotation: number) => void; // new callback
+    updateJointBug: boolean;
+    setUpdateJointBug: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Stickman: React.FC<StickmanProps> = ({ id, x, y, rotation, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY, onDragEnd, onScaleChange, onRotateChange }) => {
+const Stickman: React.FC<StickmanProps> = ({
+    id, x, y, rotation, draggable, onSelect, joints, onJointsUpdate, scaleX, scaleY,
+    onDragEnd, onScaleChange, onRotateChange, updateJointBug, setUpdateJointBug
+}) => {
 
     const stickmanGroupRef = useRef<Konva.Group>(null);
 
@@ -39,6 +44,12 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, rotation, draggable, onSe
             stickmanGroupRef.current.rotation(rotation);
         }
     }, [scaleX, scaleY, rotation]);
+
+    const handleDragEnd = (
+    ) => {
+        setUpdateJointBug(false);
+    };
+
 
 
     return (
@@ -139,7 +150,8 @@ const Stickman: React.FC<StickmanProps> = ({ id, x, y, rotation, draggable, onSe
                     onClick={(e) => {
                         e.cancelBubble = true;
                     }}
-                    onDragMove={(e) => handleJointDrag(stickmanGroupRef, onSelect, id, joints, onJointsUpdate, index, e.target.x(), e.target.y())}
+                    onDragMove={(e) => handleJointDrag(stickmanGroupRef, onSelect, id, joints, onJointsUpdate, index, e.target.x(), e.target.y(), setUpdateJointBug)}
+                    onDragEnd={handleDragEnd}
                 />
             ))}
         </Group>

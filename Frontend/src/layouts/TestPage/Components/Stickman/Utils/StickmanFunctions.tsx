@@ -10,7 +10,8 @@ export const handleJointDrag = (
   onJointsUpdate: (id: number, joints: Array<{ x: number; y: number }>) => void,
   index: number,
   x: number,
-  y: number
+  y: number,
+  setUpdateJointBug: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   if (stickmanGroupRef.current) {
     onSelect(null, id);
@@ -18,6 +19,7 @@ export const handleJointDrag = (
   const newJoints = [...joints];
   newJoints[index] = { x, y };
   onJointsUpdate(id, newJoints);
+  setUpdateJointBug(true);
 };
 
 

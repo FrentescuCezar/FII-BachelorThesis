@@ -100,9 +100,11 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
     };
 
     useEffect(() => {
-        getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
-        getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
-        saveScene(stickmen, images, stickmanScales, setSceneJson)
+        if (updateJointBug == false) {
+            getBase64Image(stageRef, setImageBase64, images.map(image => image.id));
+            getBase64Image(stageRef, setStickmanBase64, stickmen.map(stickman => stickman.id));
+            saveScene(stickmen, images, stickmanScales, setSceneJson)
+        }
     }, [stickmen, images])
 
 
@@ -132,6 +134,9 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
 
     const handleClosePositions = () => setShowPositions(false);
     const handleShowPositions = () => setShowPositions(true);
+
+
+    const [updateJointBug, setUpdateJointBug] = useState(false);
 
 
     return (
@@ -318,6 +323,8 @@ const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDep
                                     });
                                 }}
                                 onRotateChange={handleRotateChange} // new callback
+                                updateJointBug
+                                setUpdateJointBug={setUpdateJointBug}
                             />
                         ))}
                         {images.map((image, index) => (

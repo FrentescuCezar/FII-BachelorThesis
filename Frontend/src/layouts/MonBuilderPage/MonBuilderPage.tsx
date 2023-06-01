@@ -148,7 +148,7 @@ export const MonBuilderPage = () => {
                                             Canvas Page
                                         </Button>
                                         <Button onClick={() => setActivePage("PaintPage")} style={{ marginLeft: "10px" }}>
-                                            Paint Page
+                                            Stickman Page
                                         </Button>
                                     </>
                                 )}

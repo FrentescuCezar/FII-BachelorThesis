@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.3",
     "@okta/okta-react": "^6.4.3",
     "@okta/okta-signin-widget": "^6.3.3",
     "@testing-library/jest-dom": "^5.16.5",
@@ -30,6 +33,7 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
     "react-simply-carousel": "^8.5.5",
+    "react-tooltip": "^5.13.1",
     "react-touch-carousel": "^0.10.2",
     "typescript": "^4.9.5",
     "use-image": "^1.1.0",

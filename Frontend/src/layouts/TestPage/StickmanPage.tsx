@@ -15,14 +15,29 @@ import {
     saveScene,
     loadScene,
     addImage,
-    createImageWithBackground,
 } from './Utils/StickmanPageFunctions';
 import ImageCustom from './Image/Image';
 import { useOktaAuth } from '@okta/okta-react';
+
 import { submitPositions } from './Api/PosingApi';
-import { Button } from 'react-bootstrap';
+
 import DepthMapModal from './Components/DepthMaps/DepthMapModal';
 import { PositionsModal } from './Components/Positions/PositionsModal';
+
+
+import { IoPersonAdd, IoTrashBinSharp } from 'react-icons/io5';
+import { BsLayerForward, BsLayerBackward } from 'react-icons/bs';
+import { GiBowman, GiArmoredPants } from 'react-icons/gi';
+import { RiSave3Fill } from 'react-icons/ri';
+
+import Tooltip from '@mui/material/Tooltip';
+
+import AddStickmanGIF from "../../../src/Images/StickmenImage/AddStickman.gif"
+import RemoveStickmanGIF from "../../../src/Images/StickmenImage/RemoveStickman.gif"
+import ForwardStickmanGIF from "../../../src/Images/StickmenImage/ForwardStickman.gif"
+import BackwardsStickmanGIF from "../../../src/Images/StickmenImage/BackwardsStickman.gif"
+
+
 
 type imagesProps = {
     setImageOfStickmen: React.Dispatch<React.SetStateAction<string>>,
@@ -31,7 +46,7 @@ type imagesProps = {
 };
 
 
-const PaintPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthMaps, generatedImage }) => {
+const StickmanPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthMaps, generatedImage }) => {
 
     const { authState } = useOktaAuth();
 
@@ -118,23 +133,119 @@ const PaintPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthM
     const handleClosePositions = () => setShowPositions(false);
     const handleShowPositions = () => setShowPositions(true);
 
+
     return (
         <div>
-            <div>
-                <button onClick={() => addStickman(stickmen, setStickmen, uniqueIdCounter, setUniqueIdCounter)}>Add</button>
-                <button onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>Remove</button>
-                <button onClick={() => bringForward(selectedNode)}>Bring forward</button>
-                <button onClick={() => bringBackward(selectedNode)}>Bring backward</button>
-                <button onClick={handleOnSubmitPosition}>Submit Position</button>
+            <div style={{ display: 'flex', alignItems: 'start' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',  // creates a grid with two equal columns
+                    gridGap: '0px',  // adjust this value to change the gap between grid
+                }}>
+                    <Tooltip
+                        title={
+                            <>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img
+                                        src={AddStickmanGIF}
+                                        alt="Explanation in GIF"
+                                        style={{ width: 200, height: 200 }}
+                                    />
+                                    <p style={{ textAlign: 'center', marginTop: '10px', fontSize: '16px' }}>Add a new stickman</p>
+                                </div>
+                            </>
+                        }
+                        enterDelay={1000}
+                        placement="right"
+                    >
+                        <button style={{ width: '45px', height: '45px' }} onClick={() => addStickman(stickmen, setStickmen, uniqueIdCounter, setUniqueIdCounter)}>
+                            <IoPersonAdd size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
 
-                <Button variant="primary" onClick={handleShowDepthMap}>
-                    Load DepthMaps
-                </Button>
+                    <Tooltip
+                        title={
+                            <>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img
+                                        src={RemoveStickmanGIF}
+                                        alt="Explanation in GIF"
+                                        style={{ width: 200, height: 200 }}
+                                    />
+                                    <p style={{ textAlign: 'center', marginTop: '10px', fontSize: '16px' }}>Remove an element</p>
+                                </div>
+                            </>
+                        }
+                        enterDelay={1000}
+                        placement="right"
+                    >
+                        <button style={{ width: '45px', height: '45px' }} onClick={() => removeNode(selectedNode, selectedNodeId, stickmen, setStickmen, setSelectedNode, setSelectedNodeId, images, setImages)}>
+                            <IoTrashBinSharp size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
 
-                <Button variant="primary" onClick={handleShowPositions}>
-                    Load Positions
-                </Button>
+                    <Tooltip
+                        title={
+                            <>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img
+                                        src={ForwardStickmanGIF}
+                                        alt="Explanation in GIF"
+                                        style={{ width: 200, height: 200 }}
+                                    />
+                                    <p style={{ textAlign: 'center', marginTop: '10px', fontSize: '16px' }}>Bring Forward an element</p>
+                                </div>
+                            </>
+                        }
+                        enterDelay={1000}
+                        placement="right"
+                    >
+                        <button style={{ width: '45px', height: '45px' }} onClick={() => bringForward(selectedNode)}>
+                            <BsLayerForward size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
 
+                    <Tooltip
+                        title={
+                            <>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img
+                                        src={BackwardsStickmanGIF}
+                                        alt="Explanation in GIF"
+                                        style={{ width: 200, height: 200 }}
+                                    />
+                                    <p style={{ textAlign: 'center', marginTop: '10px', fontSize: '16px' }}>Bring Forward an element</p>
+                                </div>
+                            </>
+                        }
+                        enterDelay={1000}
+                        placement="right"
+                    >
+                        <button style={{ width: '45px', height: '45px' }} onClick={() => bringBackward(selectedNode)}>
+                            <BsLayerBackward size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
+
+                    <Tooltip title={<p style={{ textAlign: 'center', marginTop: '15px', fontSize: '16px' }}>Poses</p>} placement="left">
+                        <button style={{ width: '45px', height: '45px' }} onClick={handleShowPositions}>
+                            <GiBowman size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
+
+                    <Tooltip title={<p style={{ textAlign: 'center', marginTop: '15px', fontSize: '16px' }}>Objects</p>} placement="right">
+                        <button style={{ width: '45px', height: '45px' }} onClick={handleShowDepthMap}>
+                            <GiArmoredPants size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
+
+                    <Tooltip title={<p style={{ textAlign: 'center', marginTop: '15px', fontSize: '16px' }}>Save pose</p>} placement="left">
+                        <button style={{ width: '45px', height: '45px' }} onClick={handleOnSubmitPosition}>
+                            <RiSave3Fill size={24} color={'black'} style={{ verticalAlign: 'middle' }} />
+                        </button>
+                    </Tooltip>
+
+
+                </div>
                 <DepthMapModal
                     show={showDepthMap}
                     handleClose={handleCloseDepthMap}
@@ -249,8 +360,8 @@ const PaintPage: React.FC<imagesProps> = ({ setImageOfStickmen, setimageOfDepthM
                     </Layer>
                 </Stage>
             </div>
-        </div>
+        </div >
     );
 };
 
-export default PaintPage;
+export default StickmanPage;

@@ -9,7 +9,7 @@ import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon 
 
 
 import image from "../../Images/PublicImages/MonBuilderImage.png"
-import PaintPage from "../TestPage/StickmanPage";
+import StickmanPage from "../TestPage/StickmanPage";
 import { StickmanScalesProvider } from "../TestPage/Utils/StickmanScalesProvider";
 import { AlwaysonScripts, ScriptArgs } from "../../models/TextToImageRequestModel";
 import { createImageWithBackground } from "../TestPage/Utils/StickmanPageFunctions";
@@ -134,24 +134,34 @@ export const MonBuilderPage = () => {
                 <Row>
                     <Col>
                         <Form.Group controlId="controlNetCheckbox">
-                            <Form.Check
-                                type="checkbox"
-                                label="Enable ControlNet"
-                                checked={isControlNetEnabled}
-                                onChange={() => setControlNetEnabled(!isControlNetEnabled)}
-                            />
+                            <div style={{ display: "flex", alignItems: "center", height: "20px", marginBottom: "25px", marginTop: "10px" }}>
+                                <Form.Check
+                                    type="checkbox"
+                                    label="Enable ControlNet"
+                                    checked={isControlNetEnabled}
+                                    onChange={() => setControlNetEnabled(!isControlNetEnabled)}
+                                    style={{ marginTop: "0" }}
+                                />
+                                {isControlNetEnabled && (
+                                    <>
+                                        <Button onClick={() => setActivePage("CanvasPage")} style={{ marginLeft: "10px" }}>
+                                            Canvas Page
+                                        </Button>
+                                        <Button onClick={() => setActivePage("PaintPage")} style={{ marginLeft: "10px" }}>
+                                            Paint Page
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
                         </Form.Group>
 
                         <div style={{ display: isControlNetEnabled ? "block" : "none" }}>
-                            <Button onClick={() => setActivePage("CanvasPage")}>Canvas Page</Button>
-                            <Button onClick={() => setActivePage("PaintPage")}>Paint Page</Button>
-
                             <div style={{ display: activePage === "CanvasPage" ? "block" : "none" }}>
                                 <CanvasPage />
                             </div>
                             <div style={{ display: activePage === "PaintPage" ? "block" : "none" }}>
                                 <StickmanScalesProvider>
-                                    <PaintPage
+                                    <StickmanPage
                                         setImageOfStickmen={setImageOfStickmen}
                                         setimageOfDepthMaps={setimageOfDepthMaps}
                                         generatedImage={imageData}
@@ -264,13 +274,13 @@ export const MonBuilderPage = () => {
                         ) : (
                             <div>
                                 <h3>Design your own Pokemon!</h3>
-                                <img src={image} alt="Placeholder" className="pokemon-image" />
+                                <img src={image} alt="Placeholder" className="my-4 pokemon-image" />
                             </div>
                         )}
                     </Col>
                 </Row>
             </Container>
-        </div>
+        </div >
 
     );
 };

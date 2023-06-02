@@ -4,7 +4,13 @@ import CanvasCustom from "./CanvasCustom";
 import { submitPrompt } from "../../../MonBuilderPage/Api/MonBuilderApi";
 import { AlwaysonScripts, ScriptArgs } from "../../../../models/TextToImageRequestModel";
 
-export const CanvasPage = () => {
+interface CanvasPageProps {
+    setImageOfCanvas: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const CanvasPage: React.FC<CanvasPageProps> = ({
+    setImageOfCanvas
+}) => {
     const [color, setColor] = useState('#000000');
     const [brushSize, setBrushSize] = useState(4);
     const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
@@ -17,10 +23,8 @@ export const CanvasPage = () => {
 
     const MAX_HISTORY_SIZE = 100;
 
-    const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [lastUploadedImage, setLastUploadedImage] = useState<string | null>(null);
 
-    const [preprocessorImage, setPreprocessorImage] = useState("");
 
     const undo = () => {
         if (historyIndex <= 0 || !context) return;
@@ -83,7 +87,7 @@ export const CanvasPage = () => {
 
             // Export to base64
             const dataURL = newCanvas.toDataURL();
-            console.log(dataURL);
+            setImageOfCanvas(dataURL);
         }
     };
 
@@ -141,7 +145,7 @@ export const CanvasPage = () => {
                         /* prompt */ "example",
                         /* sampler_index */ "Euler a",
                         /* setIsImageLoading: */() => { },
-                        /* setImageData: */     setPreprocessorImage,
+                        /* setImageData: */() => { },
                         /* setSeed */() => { },
                         /* imageIndex */ 1,
                         /* seed */      -1,
@@ -179,7 +183,6 @@ export const CanvasPage = () => {
                         }
 
                         newImageData = canvas.toDataURL();
-
                         drawImageOnCanvas(newImageData);
                     }
                 };

@@ -100,8 +100,8 @@ export const MonBuilderPage = () => {
             weight: depthmapsControlNetSetting,
         };
         const arg3: ScriptArgs = {
-            input_image: imageOfDepthMaps,
-            module: "scribble_xdog",
+            input_image: imageOfCanvas,
+            module: "lineart_realistic",
             model: "control_v11p_sd15_scribble [d4ba51ff]",
             resize_mode: 1,
             weight: 1,
@@ -151,7 +151,7 @@ export const MonBuilderPage = () => {
             setIsImageLoading,
             setImageData,
             setSeed,
-            1,
+            0,
             seedInput ? parseInt(seedInput) : undefined,
             negativePrompt,
             alwaysonScripts
@@ -196,7 +196,9 @@ export const MonBuilderPage = () => {
 
                         <div style={{ display: isControlNetEnabled ? "block" : "none" }}>
                             <div style={{ display: activePage === "CanvasPage" ? "block" : "none" }}>
-                                <CanvasPage />
+                                <CanvasPage
+                                    setImageOfCanvas={setImageOfCanvas}
+                                />
                             </div>
                             <div style={{ display: activePage === "PaintPage" ? "block" : "none" }}>
                                 <StickmanScalesProvider>

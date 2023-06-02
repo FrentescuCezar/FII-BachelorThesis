@@ -34,8 +34,6 @@ export async function submitPrompt(
         const response = await fetch(url, requestOptions);
         const data = await response.json();
 
-        console.log(data)
-
         if (!response.ok) {
             throw new Error("Something went wrong!");
         }

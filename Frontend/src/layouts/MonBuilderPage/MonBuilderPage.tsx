@@ -104,7 +104,7 @@ export const MonBuilderPage = () => {
             module: "lineart_realistic",
             model: "control_v11p_sd15_scribble [d4ba51ff]",
             resize_mode: 1,
-            weight: 1,
+            weight: 0.8,
         };
 
 

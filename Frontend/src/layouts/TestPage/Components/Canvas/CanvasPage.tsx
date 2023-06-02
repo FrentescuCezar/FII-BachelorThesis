@@ -4,6 +4,19 @@ import CanvasCustom from "./CanvasCustom";
 import { submitPrompt } from "../../../MonBuilderPage/Api/MonBuilderApi";
 import { AlwaysonScripts, ScriptArgs } from "../../../../models/TextToImageRequestModel";
 
+declare global {
+    interface Window {
+        nsfwjs: {
+            load: () => Promise<any>;
+        };
+    }
+}
+
+interface Prediction {
+    className: string;
+    probability: number;
+}
+
 interface CanvasPageProps {
     setImageOfCanvas: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -11,6 +24,9 @@ interface CanvasPageProps {
 export const CanvasPage: React.FC<CanvasPageProps> = ({
     setImageOfCanvas
 }) => {
+
+
+
     const [color, setColor] = useState('#000000');
     const [brushSize, setBrushSize] = useState(4);
     const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
@@ -99,6 +115,8 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
             reader.onload = async function (e) {
                 const img = new Image();
                 img.src = e.target?.result as string;
+
+                classifyImage(img.src); // Call the classifyImage function here
 
                 img.onload = async () => {
                     // calculate the width and height, maintaining the aspect ratio
@@ -205,6 +223,22 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
             saveCanvasState();
         };
     }
+
+
+    const classifyImage = async (imgSrc: string) => {
+        const model = await window.nsfwjs.load();
+        const img = new Image();
+        img.src = imgSrc;
+        img.crossOrigin = 'anonymous';
+        img.onload = async () => {
+            const predictions = await model.classify(img);
+
+            // Log all the percentiles for the predictions
+            predictions.forEach((prediction: Prediction) => {
+                console.log(`Class: ${prediction.className}, Probability: ${(prediction.probability * 100).toFixed(2)}%`);
+            });
+        };
+    };
 
     return (
         <div>

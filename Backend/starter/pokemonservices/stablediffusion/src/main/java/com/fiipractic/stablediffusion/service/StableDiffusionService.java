@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class StableDiffusionService {
 
@@ -67,15 +70,25 @@ public class StableDiffusionService {
         if (response.getStatusCode() == HttpStatus.OK) {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
-            String image = jsonNode.get("images").get(0).asText();
-            String info = jsonNode.get("info").asText();
-            JsonNode infoNode = objectMapper.readTree(info);
-            String seed = infoNode.get("seed").asText();
+            // Check if the "images" node is an array
+            if (jsonNode.get("images").isArray()) {
+                List<String> images = new ArrayList<>();
+                for (JsonNode imageNode : jsonNode.get("images")) {
+                    images.add(imageNode.asText());
+                }
 
-            return new ImageResponse(image, seed);
+                String info = jsonNode.get("info").asText();
+                JsonNode infoNode = objectMapper.readTree(info);
+                String seed = infoNode.get("seed").asText();
+
+                return new ImageResponse(images, seed);
+            } else {
+                throw new Exception("Error: images node is not an array");
+            }
 
         } else {
             throw new Exception("Error: " + response.getStatusCode());
         }
     }
+
 }

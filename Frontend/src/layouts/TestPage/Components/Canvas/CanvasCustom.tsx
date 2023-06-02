@@ -57,12 +57,13 @@ const CanvasCustom: React.FC<CanvasProps> = ({ color,
 
     useEffect(() => {
         if (canvasRef.current) {
-            const renderCtx = canvasRef.current.getContext('2d');
+            const renderCtx = canvasRef.current.getContext('2d', { willReadFrequently: true });
             if (renderCtx) {
+
                 setContext(renderCtx);
             }
         }
-    }, [canvasRef]);
+    }, [canvasRef, setContext]);
 
     //Make the brush more smooth
     useEffect(() => {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import ToolbarStable from "./ToolbarStable";
 import CanvasCustom from "./CanvasCustom";
+import { submitPrompt } from "../../../MonBuilderPage/Api/MonBuilderApi";
+import { AlwaysonScripts, ScriptArgs } from "../../../../models/TextToImageRequestModel";
 
 export const CanvasPage = () => {
     const [color, setColor] = useState('#000000');
@@ -18,7 +20,7 @@ export const CanvasPage = () => {
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [lastUploadedImage, setLastUploadedImage] = useState<string | null>(null);
 
-
+    const [preprocessorImage, setPreprocessorImage] = useState("");
 
     const undo = () => {
         if (historyIndex <= 0 || !context) return;
@@ -85,19 +87,16 @@ export const CanvasPage = () => {
         }
     };
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
             const reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = async function (e) {
                 const img = new Image();
                 img.src = e.target?.result as string;
 
-                img.onload = () => {
-                    // Reset history
-                    setHistory([new ImageData(bufferDimensions.width, bufferDimensions.height)]);
-                    setHistoryIndex(0);
-
+                img.onload = async () => {
                     // calculate the width and height, maintaining the aspect ratio
                     let aspectRatio = img.width / img.height;
                     let newWidth = bufferDimensions.width;
@@ -114,8 +113,74 @@ export const CanvasPage = () => {
                     canvas.height = bufferDimensions.height;
                     const ctx = canvas.getContext('2d');
                     if (ctx) {
-                        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                        setUploadedImage(canvas.toDataURL());
+                        const startX = (canvas.width - newWidth) / 2;
+                        const startY = (canvas.height - newHeight) / 2;
+                        ctx.drawImage(img, startX, startY, newWidth, newHeight);
+                    }
+
+
+                    const processedImgSrc = canvas.toDataURL();
+
+                    const arg3: ScriptArgs = {
+                        input_image: processedImgSrc,
+                        module: "lineart_realistic",
+                        model: "control_v11p_sd15_scribble [d4ba51ff]",
+                        resize_mode: 1,
+                        weight: 1,
+                    };
+
+                    let alwaysonScripts: AlwaysonScripts;
+                    alwaysonScripts = {
+                        controlnet: {
+                            args: [arg3],
+                        },
+                    };
+
+                    let newImageData = await submitPrompt(
+                        /* steps */ 20,
+                        /* prompt */ "example",
+                        /* sampler_index */ "Euler a",
+                        /* setIsImageLoading: */() => { },
+                        /* setImageData: */     setPreprocessorImage,
+                        /* setSeed */() => { },
+                        /* imageIndex */ 1,
+                        /* seed */      -1,
+                        /* negative_prompts */ "",
+                        /* alwayson_scripts */ alwaysonScripts
+                    );
+
+                    newImageData = "data:image/png;base64," + newImageData;
+
+                    // Invert newImageData
+                    if (newImageData) {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = newImageData;
+                        await new Promise((resolve) => {
+                            imgElement.onload = () => resolve(true);
+                        });
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = imgElement.width;
+                        canvas.height = imgElement.height;
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
+                            let imageData = ctx.getImageData(0, 0, imgElement.width, imgElement.height);
+                            let data = imageData.data;
+
+                            for (let i = 0; i < data.length; i += 4) {
+                                // invert the colors
+                                data[i] = 255 - data[i];     // red
+                                data[i + 1] = 255 - data[i + 1]; // green
+                                data[i + 2] = 255 - data[i + 2]; // blue
+                            }
+
+                            ctx.putImageData(imageData, 0, 0);
+                        }
+
+                        newImageData = canvas.toDataURL();
+
+                        drawImageOnCanvas(newImageData);
                     }
                 };
             };
@@ -123,19 +188,20 @@ export const CanvasPage = () => {
         }
     };
 
-    useEffect(() => {
-        if (context && uploadedImage && uploadedImage !== lastUploadedImage) {
-            const img = new Image();
-            img.src = uploadedImage;
-            img.onload = () => {
+
+    // Function to draw image on the canvas
+    const drawImageOnCanvas = (imgSrc: string) => {
+        const img = new Image();
+        img.src = imgSrc;
+        img.onload = () => {
+            if (context) {
                 context.clearRect(0, 0, bufferDimensions.width, bufferDimensions.height);
                 context.drawImage(img, 0, 0, 512, 512);
-                setLastUploadedImage(uploadedImage);
-                saveCanvasState();
-            };
-        }
-    }, [context, uploadedImage, lastUploadedImage, bufferDimensions.width, bufferDimensions.height, saveCanvasState]);
-
+            }
+            setLastUploadedImage(imgSrc);
+            saveCanvasState();
+        };
+    }
 
     return (
         <div>

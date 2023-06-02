@@ -4,6 +4,8 @@ import PoketexRequestModel from '../../../models/PoketexRequestModel'
 
 
 // Image generation
+// Adjust return type to string
+// Adjust return type to Promise<string | undefined>
 export async function submitPrompt(
     steps: number,
     prompt: string,
@@ -11,11 +13,11 @@ export async function submitPrompt(
     setIsImageLoading: (loading: boolean) => void,
     setImageData: (data: string) => void,
     setSeed: (seed: number) => void,
+    imageIndex: number = 0,
     seed?: number,
     negative_prompts?: string,
     alwayson_scripts?: any
-
-) {
+): Promise<string | undefined> {
     setIsImageLoading(true);
     const imageRequestModel = new ImageRequestModel(steps, prompt, sampler_index, seed, negative_prompts, alwayson_scripts);
     const url = `http://localhost:8081/api/textToImage`;
@@ -37,14 +39,24 @@ export async function submitPrompt(
         if (!response.ok) {
             throw new Error("Something went wrong!");
         }
-        setImageData(data.image);
-        setSeed(data.seed);
+
+        setSeed(data.seed); // Moved up
+
+        if (data.images && data.images.length > 0) {
+            setImageData(data.images[imageIndex]);
+            return data.images[imageIndex]; // return the fetched image data
+        } else {
+            throw new Error("No images returned");
+        }
+
     } catch (error) {
         console.error(error);
     } finally {
         setIsImageLoading(false);
     }
 }
+
+
 
 // Name generation
 export async function fetchPokemonName(

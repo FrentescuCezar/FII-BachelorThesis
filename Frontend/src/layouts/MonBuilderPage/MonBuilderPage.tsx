@@ -53,6 +53,7 @@ export const MonBuilderPage = () => {
 
     const [imageOfStickmen, setImageOfStickmen] = useState("");
     const [imageOfDepthMaps, setimageOfDepthMaps] = useState("");
+    const [imageOfCanvas, setImageOfCanvas] = useState("");
 
     useEffect(() => {
         if (imageOfStickmen !== "") {
@@ -98,6 +99,13 @@ export const MonBuilderPage = () => {
             resize_mode: 1,
             weight: depthmapsControlNetSetting,
         };
+        const arg3: ScriptArgs = {
+            input_image: imageOfDepthMaps,
+            module: "scribble_xdog",
+            model: "control_v11p_sd15_scribble [d4ba51ff]",
+            resize_mode: 1,
+            weight: 1,
+        };
 
 
         let alwaysonScripts: AlwaysonScripts;
@@ -124,7 +132,7 @@ export const MonBuilderPage = () => {
         } else {
             alwaysonScripts = {
                 controlnet: {
-                    args: [arg1],
+                    args: [arg3],
                 },
             };
         }
@@ -143,6 +151,7 @@ export const MonBuilderPage = () => {
             setIsImageLoading,
             setImageData,
             setSeed,
+            1,
             seedInput ? parseInt(seedInput) : undefined,
             negativePrompt,
             alwaysonScripts

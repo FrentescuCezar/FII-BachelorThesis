@@ -13,7 +13,7 @@ interface ToolbarProps {
     redo: () => void;
     saveBase64Image: () => void;
     handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
+    openModal: () => void;
 }
 
 const ToolbarStable: React.FC<ToolbarProps> = ({
@@ -26,7 +26,8 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
     undo,
     redo,
     saveBase64Image,
-    handleImageUpload
+    handleImageUpload,
+    openModal
 }) => {
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -106,20 +107,7 @@ const ToolbarStable: React.FC<ToolbarProps> = ({
             <button onClick={saveBase64Image}>
                 <FaSave size={24} style={{ verticalAlign: 'middle' }} />
             </button>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleImageUpload}
-            />
-            <button
-                onClick={() => {
-                    if (fileInputRef.current) {
-                        fileInputRef.current.click();
-                    }
-                }}
-            >
+            <button onClick={openModal}>
                 <FaImage size={24} style={{ verticalAlign: 'middle' }} />
             </button>
 

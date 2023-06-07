@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ToolbarStable from "./ToolbarStable";
 import CanvasCustom from "./CanvasCustom";
 import { submitPrompt } from "../../../MonBuilderPage/Api/MonBuilderApi";
 import { AlwaysonScripts, ScriptArgs } from "../../../../models/TextToImageRequestModel";
+import { Button, Modal } from "react-bootstrap";
 
 declare global {
     interface Window {
@@ -108,6 +109,9 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
     };
 
 
+    const [uploadedImage, setUploadedImage] = useState("");
+
+
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
@@ -115,10 +119,51 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
             reader.onload = async function (e) {
                 const img = new Image();
                 img.src = e.target?.result as string;
-
-                classifyImage(img.src); // Call the classifyImage function here
+                setUploadedImage(img.src);
 
                 img.onload = async () => {
+
+                    // Classify the image before processing
+                    const predictions = await classifyImage(img.src);
+
+                    setPredictions(predictions); // save the predictions in state
+
+                    // check if explicit content is higher than neutral
+                    let explicitContent = 0;
+                    let neutralContent = 0;
+
+                    predictions.forEach((prediction: Prediction) => {
+                        if (prediction.className === "Hentai" || prediction.className === "Porn") {
+                            explicitContent += prediction.probability;
+                        }
+                        if (prediction.className === "Drawing" || prediction.className === "Neutral") {
+                            neutralContent += prediction.probability;
+                        }
+                    });
+
+                    if (explicitContent > neutralContent) {
+                        setExplicitCheck("Unworthy of the Pokémon League: Disapproved!");
+                    } else {
+                        setExplicitCheck("Worthy of the Pokémon League: Approved!");
+                    }
+
+
+                    explicitContent = predictions.filter((prediction: Prediction) =>
+                        ["Hentai", "Porn"].includes(prediction.className)
+                    ).reduce((acc, curr) => acc + curr.probability, 0);
+
+                    neutralContent = predictions.filter((prediction: Prediction) =>
+                        ["Drawing", "Neutral"].includes(prediction.className)
+                    ).reduce((acc, curr) => acc + curr.probability, 0);
+
+                    // If the image is explicit, stop the function here
+                    if (explicitContent > neutralContent) {
+                        setClassificationResult("The image content is explicit.");
+                        setShowModal(true);
+                        return;
+                    }
+
+
                     // calculate the width and height, maintaining the aspect ratio
                     let aspectRatio = img.width / img.height;
                     let newWidth = bufferDimensions.width;
@@ -225,20 +270,41 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
     }
 
 
-    const classifyImage = async (imgSrc: string) => {
+    const classifyImage = async (imgSrc: string): Promise<Prediction[]> => {
         const model = await window.nsfwjs.load();
         const img = new Image();
         img.src = imgSrc;
         img.crossOrigin = 'anonymous';
-        img.onload = async () => {
-            const predictions = await model.classify(img);
 
-            // Log all the percentiles for the predictions
-            predictions.forEach((prediction: Prediction) => {
-                console.log(`Class: ${prediction.className}, Probability: ${(prediction.probability * 100).toFixed(2)}%`);
-            });
-        };
+        return new Promise((resolve, reject) => {
+            img.onload = async () => {
+                try {
+                    const predictions = await model.classify(img);
+                    console.log(predictions);
+                    resolve(predictions);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            img.onerror = () => {
+                reject(new Error("There was an error loading the image for classification."));
+            };
+        })
     };
+
+    const [showModal, setShowModal] = useState(false);
+    const openModal = () => {
+        setShowModal(true);
+    };
+    const closeModal = () => {
+        setShowModal(false);
+    };
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [classificationResult, setClassificationResult] = useState("");
+    const [predictions, setPredictions] = useState<Prediction[]>([]);
+    const [explicitCheck, setExplicitCheck] = useState<string>('');
+
 
     return (
         <div>
@@ -253,7 +319,68 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
                 redo={redo}
                 saveBase64Image={saveBase64Image}
                 handleImageUpload={handleImageUpload}
+                openModal={openModal}
             />
+            <Modal show={showModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Upload Image</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleImageUpload}
+                    />
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            if (fileInputRef.current) {
+                                fileInputRef.current.click();
+                            }
+                        }}
+                        style={{ marginBottom: '10px' }}
+                    >
+                        Upload Image
+                    </Button>
+                    {uploadedImage && (
+                        <img src={uploadedImage} alt="Uploaded" style={{ maxHeight: '300px', maxWidth: '100%', objectFit: 'cover', marginBottom: '10px' }} />
+                    )}
+                    {predictions.length > 0 && (
+                        (() => {
+                            const totalProbability = predictions.reduce((acc, prediction) => {
+                                if (prediction.className !== 'Sexy') {
+                                    acc += prediction.probability;
+                                }
+                                return acc;
+                            }, 0);
+                            const badProbability = 100 * (((predictions.find((prediction) => prediction.className === 'Hentai') || {}).probability || 0) + ((predictions.find((prediction) => prediction.className === 'Porn') || {}).probability || 0)) / totalProbability;
+                            const goodProbability = 100 * (((predictions.find((prediction) => prediction.className === 'Drawing') || {}).probability || 0) + ((predictions.find((prediction) => prediction.className === 'Neutral') || {}).probability || 0)) / totalProbability;
+
+                            if (goodProbability > badProbability) {
+                                saveBase64Image();
+                            }
+
+                            const percentageColor = goodProbability >= 50 ? 'green' : 'red';
+
+                            return (
+                                <>
+                                    <p>Pokétex seal of approval:</p>
+                                    <p style={{ color: percentageColor }}>{goodProbability.toFixed(2)}%</p>
+                                </>
+                            );
+                        })()
+                    )}
+                    <p>{explicitCheck}</p>
+                </Modal.Body>
+                <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button variant="secondary" onClick={closeModal}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <CanvasCustom
                 color={color}
                 brushSize={brushSize}

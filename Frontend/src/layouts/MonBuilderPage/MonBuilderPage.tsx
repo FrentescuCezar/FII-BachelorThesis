@@ -104,7 +104,7 @@ export const MonBuilderPage = () => {
             module: "lineart_realistic",
             model: "control_v11p_sd15_scribble [d4ba51ff]",
             resize_mode: 1,
-            weight: 0.8,
+            weight: 1,
         };
 
 
@@ -288,7 +288,8 @@ export const MonBuilderPage = () => {
                                                 generation,
                                                 authState,
                                                 history,
-                                                negativePrompt
+                                                negativePrompt,
+                                                imageOfCanvas
                                             )}
                                         >
                                             Submit Pokemon
@@ -301,6 +302,7 @@ export const MonBuilderPage = () => {
                     <Col md={6} className="text-center" order={{ md: 2 }}>
                         {imageData ? (
                             <div>
+                                <h3>Design your own Pokemon!</h3>
                                 <img
                                     src={`data:image/png;base64,${imageData}`}
                                     alt="Generated Pokemon"

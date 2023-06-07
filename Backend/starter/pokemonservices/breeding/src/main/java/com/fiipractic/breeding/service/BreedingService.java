@@ -1,6 +1,7 @@
 package com.fiipractic.breeding.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiipractic.breeding.dto.PokemonDetailsDTO;
 import com.fiipractic.breeding.requestmodel.BreedRequest;
@@ -70,9 +71,12 @@ public class BreedingService {
                 )
         );
 
+        System.out.println(generatedImage);
+
         ObjectMapper objectMapper = new ObjectMapper();
-        String imageSeed = objectMapper.readTree(generatedImage).get("seed").asText();
-        String imageBase64 = objectMapper.readTree(generatedImage).get("image").asText();
+        JsonNode jsonNode = objectMapper.readTree(generatedImage);
+        String imageSeed = jsonNode.get("seed").asText();
+        String imageBase64 = jsonNode.get("images").get(0).asText();
 
         String breedPrompt = parent1.getPrompt() + " + " + parent2.getPrompt();
         String negativePrompt = Stream.of(parent1.getNegativePrompt(), parent2.getNegativePrompt())

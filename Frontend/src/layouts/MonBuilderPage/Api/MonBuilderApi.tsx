@@ -117,10 +117,13 @@ export async function submitPokemon(
     authState: any,
     history: any,
     negativePrompt?: string,
+    imageControlNet?: string,
     parent1?: number,
-    parent2?: number
+    parent2?: number,
 ) {
-    const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2);
+    const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2, imageControlNet);
+
+    console.log(JSON.stringify(poketexRequestModel));
 
     const url = `http://localhost:8084/api/poketex/create`;
     const requestOptons = {

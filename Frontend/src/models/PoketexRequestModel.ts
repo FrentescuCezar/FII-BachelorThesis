@@ -10,8 +10,9 @@ class PoketexRequestModel {
     image: string;
     steps: number;
     seed: number;
+    imageControlNet?: string;
 
-    constructor(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation: number, negativePrompt?: string, parent1?: number, parent2?: number) {
+    constructor(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation: number, negativePrompt?: string, parent1?: number, parent2?: number, imageControlNet?: string) {
         this.name = name;
         this.description = description;
         this.prompt = prompt;
@@ -22,6 +23,7 @@ class PoketexRequestModel {
         this.parent1 = parent1;
         this.parent2 = parent2;
         this.generation = generation;
+        this.imageControlNet = imageControlNet;
     }
 }
 

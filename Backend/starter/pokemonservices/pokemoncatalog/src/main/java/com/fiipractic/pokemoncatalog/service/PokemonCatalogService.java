@@ -99,6 +99,10 @@ public class PokemonCatalogService {
             poketex.setParent2(poketexRequest.getParent2().orElse(null));
         }
 
+        if(poketexRequest.getImageControlNet() != null && poketexRequest.getImageControlNet().isPresent()){
+            poketex.setImageControlNet(poketexRequest.getImageControlNet().orElse(null));
+        }
+
         poketex.setSteps(poketexRequest.getSteps());
         poketex.setSeed(poketexRequest.getSeed());
         poketex.setImage(poketexRequest.getImage());

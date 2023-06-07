@@ -25,6 +25,8 @@ public class Poketex {
     private String description;
     @Column(name = "image", columnDefinition = "text")
     private String image;
+    @Column(name = "imageControlNet", columnDefinition = "text")
+    private String imageControlNet;
     private Long seed;
     @Column(columnDefinition = "text")
     private String prompt;

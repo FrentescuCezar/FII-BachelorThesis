@@ -12,6 +12,7 @@ public class PoketexRequest {
     Optional<String> negativePrompt;
     Optional<Integer> parent1;
     Optional<Integer> parent2;
+    Optional<String> imageControlNet;
     Integer generation;
     String image;
     Integer steps;

@@ -102,9 +102,9 @@ const CanvasCustom: React.FC<CanvasProps> = ({ color,
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.ctrlKey && event.key === 'z') {
+            if (event.ctrlKey && event.key === ',') {
                 undo();
-            } else if (event.ctrlKey && event.key === 'y') {
+            } else if (event.ctrlKey && event.key === '.') {
                 redo();
             }
         };

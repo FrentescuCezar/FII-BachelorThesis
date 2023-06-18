@@ -316,6 +316,113 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+.bubble {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 30px;
+  /* Increase to make more bubbly */
+  max-width: 80%;
+  min-width: 20%;
+  margin-bottom: 20px;
+  border: 1px solid #000000;
+  position: relative;
+  overflow-wrap: break-word;
+}
+
+.trainer-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.trainer-container .trainer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.trainer-container.trainer1 .bubble {
+  margin-right: 200px;
+  margin-bottom: 250px;
+}
+
+.trainer-container.trainer1 .bubble::after,
+.trainer-container.trainer1 .bubble::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-right-color: #f9f9f9;
+  border-left: 0;
+  border-bottom: 0;
+  margin-top: -12px;
+  margin-left: -20px;
+}
+
+
+.trainer-container.trainer1 .bubble::before {
+  border-right-color: #000000;
+  margin-left: -19px;
+  /* Adjust according to the bubble border width */
+  margin-top: -15px;
+  /* Adjust according to the bubble border width */
+  z-index: -3;
+}
+
+.trainer-container.reverse .trainer-section {
+  align-items: flex-end;
+}
+
+.trainer-container.trainer2 .bubble {
+  margin-right: 20px;
+}
+
+.trainer-container.trainer2 .bubble::after,
+.trainer-container.trainer2 .bubble::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-left-color: #f9f9f9;
+  border-right: 0;
+  border-bottom: 0;
+  margin-top: -20px;
+  margin-right: -20px;
+}
+
+
+.trainer-container.trainer2 .bubble::before {
+  border-left-color: #000000;
+  margin-right: -21px;
+  /* Adjust according to the bubble border width */
+  margin-top: -21px;
+  /* Adjust according to the bubble border width */
+  z-index: -1;
+}
+
+
+
+.trainer-container.reverse {
+  flex-direction: row-reverse;
+}
+
 /* set the height based on the width to make it a square */
 
 

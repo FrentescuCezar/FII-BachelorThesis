@@ -281,7 +281,6 @@ export const CanvasPage: React.FC<CanvasPageProps> = ({
             img.onload = async () => {
                 try {
                     const predictions = await model.classify(img);
-                    console.log(predictions);
                     resolve(predictions);
                 } catch (error) {
                     reject(error);

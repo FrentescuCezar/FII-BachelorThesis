@@ -64,7 +64,7 @@ public class BreedingService {
         String generatedImage = getNewGeneratedImage(
                 new ImageGenerationRequest(
                         parent1.getImage(),
-                        parent2.getPrompt(),
+                        parent2.getPrompt() + "sugimori ken \\(style\\)" + "pokemon \\(creature\\)" + "<lora:pokemon_v3_offset:1>",
                         parent2.getNegativePrompt(),
                         parent2.getSteps(),
                         parent2.getSeed()

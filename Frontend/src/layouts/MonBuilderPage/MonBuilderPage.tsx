@@ -9,6 +9,8 @@ import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon 
 
 
 import image from "../../Images/PublicImages/MonBuilderImage.png"
+import trainer1 from "../../Images/TrainerImage/Trainer1.png"
+import trainer2 from "../../Images/TrainerImage/Trainer2.png"
 import StickmanPage from "../TestPage/StickmanPage";
 import { StickmanScalesProvider } from "../TestPage/Utils/StickmanScalesProvider";
 import { AlwaysonScripts, ScriptArgs } from "../../models/TextToImageRequestModel";
@@ -250,32 +252,47 @@ export const MonBuilderPage = () => {
                         {imageData && (
                             <>
                                 <div className="my-5">
-                                    <Button onClick={() => fetchPokemonName(finalPrompt, setIsNameLoading, setPokemonName)} disabled={isNameLoading}>
-                                        {isNameLoading ? "Generating Name..." : "Generate Name"}
-                                    </Button>
-                                    {isNameLoading ? (
-                                        <div className="mt-2">
-                                            <SpinnerLoading />
+                                    <div className="trainer-container trainer1">
+                                        <div className="trainer-section">
+                                            <img src={trainer1} alt="Trainer 1" width="200" />
+                                            <Button onClick={() => fetchPokemonName(finalPrompt, setIsNameLoading, setPokemonName)} disabled={isNameLoading}>
+                                                {isNameLoading ? "Generating Name..." : "Generate Name"}
+                                            </Button>
                                         </div>
-                                    ) : (
-                                        pokemonName && <p>Pokemon Name: {pokemonName}</p>
-                                    )}
+                                        {isNameLoading ? (
+                                            <div className="mt-2">
+                                                <SpinnerLoading />
+                                            </div>
+                                        ) : (
+                                            pokemonName &&
+                                            <div className="bubble">
+                                                <p>Pokemon Name: {pokemonName}</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="my-5">
-                                    <Button onClick={() => fetchPokemonDescription(
-                                        finalPrompt,
-                                        setIsDescriptionLoading,
-                                        setPokemonDescription
-                                    )} disabled={isDescriptionLoading}>
-                                        {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
-                                    </Button>
-                                    {isDescriptionLoading && (
-                                        <div className="mt-2">
-                                            <SpinnerLoading />
+                                    <div className="trainer-container trainer2 reverse">
+                                        <div className="trainer-section">
+                                            <img src={trainer2} alt="Trainer 2" width="150" />
+                                            <Button onClick={() => fetchPokemonDescription(finalPrompt, setIsDescriptionLoading, setPokemonDescription)} disabled={isDescriptionLoading}>
+                                                {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
+                                            </Button>
                                         </div>
-                                    )}
-                                    {pokemonDescription && <p>Pokemon Description: {pokemonDescription}</p>}
+                                        {isDescriptionLoading && (
+                                            <div className="mt-2">
+                                                <SpinnerLoading />
+                                            </div>
+                                        )}
+                                        {pokemonDescription &&
+                                            <div className="bubble">
+                                                <p>Pokemon Description: {pokemonDescription}</p>
+                                            </div>
+                                        }
+                                    </div>
+
+
                                     {pokemonName && pokemonDescription && (
                                         <Button
                                             onClick={() => submitPokemon(

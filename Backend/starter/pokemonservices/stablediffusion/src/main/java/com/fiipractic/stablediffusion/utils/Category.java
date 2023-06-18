@@ -1,5 +1,5 @@
 package com.fiipractic.stablediffusion.utils;
 
 public enum Category {
-    HAT, KNIFE, PANTS, SKULL
+    HATS, KNIVES, PANTS, SKULL, SHIRTS, HANDS
 }

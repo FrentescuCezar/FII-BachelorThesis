@@ -1,18 +1,24 @@
 import PoketexModel from "../../../models/PoketexModel";
 
-export const fetchPoketexes = async (url: string) => {
-    const response = await fetch(url, {
-        method: 'GET',
+export const fetchPoketexes = async (url: string, body: any, method: string) => {
+    const options: any = {
+        method: method,
         headers: {
-            accept: 'application/json',
+            'Accept': 'application/json',
         },
-    });
+    };
+    if (method === 'POST') {
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
+
 
     if (!response.ok) {
         throw new Error('The servers are down. Please try again later.');
     }
     const responseJson = await response.json();
-
     const responseData = responseJson.content;
 
     const loadedPoketexes: PoketexModel[] = [];

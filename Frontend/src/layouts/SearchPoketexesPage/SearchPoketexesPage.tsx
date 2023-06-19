@@ -23,6 +23,8 @@ export const SearchPoketexesPage = () => {
         const fetchPoketexData = async () => {
             let baseUrl: string = "http://localhost:8084/api/poketex/recent";
             let url: string = ``;
+            let requestBody: any = {};
+            let method: string = 'GET';
 
             if (searchUrl === '') {
                 url = `${baseUrl}?page=${currentPage - 1}&size=${poketexesPerPage}`;
@@ -30,10 +32,16 @@ export const SearchPoketexesPage = () => {
                 let searchWithPage = searchUrl.replace('<pageNumber>', `${currentPage - 1}`);
                 baseUrl = "http://localhost:8084";
                 url = baseUrl + searchWithPage;
+                requestBody = {
+                    prompt: search.trim(),
+                    page: currentPage - 1,
+                    size: poketexesPerPage
+                };
+                method = 'POST';
             }
 
             try {
-                const result = await fetchPoketexes(url);
+                const result = await fetchPoketexes(url, requestBody, method);
                 setPoketexes(result.poketexes);
                 setTotalAmountOfPoketexes(result.totalElements);
                 setTotalPages(result.totalPages);
@@ -42,9 +50,8 @@ export const SearchPoketexesPage = () => {
                 setIsLoading(false);
                 setHttpError(error.message);
             }
-
-            window.scrollTo(0, 0);
         };
+
 
         fetchPoketexData();
     }, [currentPage, searchUrl]);

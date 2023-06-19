@@ -40,6 +40,7 @@ export async function fetchPoketex(poketexId: string): Promise<PoketexModel> {
     data.baseTotal,
     data.baseEggSteps,
     data.experienceGrowth,
+    data.negativePrompt,
     data.parent1,
     data.parent2
   );
@@ -126,6 +127,8 @@ export async function fetchRelatedPokemons(currentPage: number, poketexesPerPage
     page: currentPage - 1,
     size: poketexesPerPage,
   };
+
+  console.log(JSON.stringify(payload))
 
   const response = await fetch(url, {
     method: 'POST',

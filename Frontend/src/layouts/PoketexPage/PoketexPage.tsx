@@ -294,17 +294,23 @@ export const PoketexPage = () => {
                             <img src='https://via.placeholder.com/256' width='256' height='256' alt='Pokemon' />
                         }
                         <div className='mt-3 text-center'>
+
                             <h1>{poketex?.name}</h1>
                             <Link to={`/user/${poketex?.username}`}>
                                 <h5 className='text-primary'>{poketex?.username}</h5>
                             </Link>
-                            <h6>"{poketex?.prompt}"</h6>
+
+                            <h6><b>Prompt:</b> "{poketex?.prompt}"</h6>
+                            {poketex?.negativePrompt !== "" ? <h6><b>Negative Prompt: </b>"{poketex?.negativePrompt}"</h6> : <></>}
+
                             <div className="container">
                                 <div className="d-flex flex-row">
                                     <StarsComment rating={totalStars} size={40} />
                                 </div>
                             </div>
+
                             <Seed seed={poketex?.seed} />
+
                             <div className='my-5'>
                                 <PokemonStats
                                     hp={poketex?.hp}

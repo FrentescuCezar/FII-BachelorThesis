@@ -60,10 +60,13 @@ public class PokemonCatalogService {
     }
 
     public Page<Poketex> findRelatedPokemons(String prompt, int page, int size) {
-        String joinedPrompt = String.join("|", prompt.replaceAll("[,;]", " ").split("\\s+"));
+        String regexSpecialChars = "[,;.+*?\\[\\](){}\\\\^$|]";
+        String cleanedPrompt = prompt.replaceAll(regexSpecialChars, " ");
+        String joinedPrompt = String.join("|", cleanedPrompt.split("\\s+"));
         Pageable pageable = PageRequest.of(page, size);
         return pokemonCatalogRepository.findRelatedPokemons(joinedPrompt, pageable);
     }
+
 
     public List<Poketex> getOrderedPokemonDetailsByIds(List<Integer> pokemonIds) {
         List<Poketex> pokemons = pokemonCatalogRepository.findAllById(pokemonIds);

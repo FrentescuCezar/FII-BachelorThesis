@@ -64,7 +64,7 @@ public class BreedingService {
         String generatedImage = getNewGeneratedImage(
                 new ImageGenerationRequest(
                         parent1.getImage(),
-                        parent2.getPrompt() + "sugimori ken \\(style\\)" + "pokemon \\(creature\\)" + "<lora:pokemon_v3_offset:1>",
+                        "white background, simple background, sugimori ken \\(style\\), pokemon \\(creature\\)," + parent2.getPrompt() + ", no humans, highres, pokemon, other focus, <lora:pokemon_v3_offset:1>",
                         parent2.getNegativePrompt(),
                         parent2.getSteps(),
                         parent2.getSeed()
@@ -79,9 +79,12 @@ public class BreedingService {
         String imageBase64 = jsonNode.get("images").get(0).asText();
 
         String breedPrompt = parent1.getPrompt() + " + " + parent2.getPrompt();
-        String negativePrompt = Stream.of(parent1.getNegativePrompt(), parent2.getNegativePrompt())
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" + "));
+        String negativePrompt="";
+        if(parent1.getNegativePrompt() != null && parent2.getNegativePrompt() != null){
+            negativePrompt = Stream.of(parent1.getNegativePrompt(), parent2.getNegativePrompt())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(" + "));
+        }
 
         String generatedName = objectMapper.readTree(getGeneratedName(breedPrompt)).get("name").asText();
         String generatedDescription = objectMapper.readTree(getGeneratedDescription(breedPrompt)).get("description").asText();

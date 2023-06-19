@@ -435,6 +435,16 @@
   flex-direction: row-reverse;
 }
 
+
+.horizontal-line {
+  width: 100%;
+  /* or specify a specific height */
+  background-color: black;
+  /* or any desired color */
+}
+
+
+
 /* set the height based on the width to make it a square */
 
 

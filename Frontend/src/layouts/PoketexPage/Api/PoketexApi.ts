@@ -41,6 +41,7 @@ export async function fetchPoketex(poketexId: string): Promise<PoketexModel> {
     data.baseEggSteps,
     data.experienceGrowth,
     data.negativePrompt,
+    data.imageControlNet,
     data.parent1,
     data.parent2
   );

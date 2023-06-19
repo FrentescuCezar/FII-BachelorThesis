@@ -23,12 +23,13 @@ class PoketexModel {
     baseEggSteps: number;
     experienceGrowth: number;
     negativePrompt?: string;
+    imageControlNet?: string;
 
     constructor(id: number, name: string, username: string, description: string, image: string,
         seed: string, prompt: string, steps: number, generation: number, abilities: string[],
         type1: string, type2: string, hp: number, attack: number, spAttack: number, defense: number,
         spDefense: number, speed: number, baseTotal: number, baseEggSteps: number,
-        experienceGrowth: number, negativePrompt?: string, parent1?: number, parent2?: number) {
+        experienceGrowth: number, negativePrompt?: string, imageControlNet?: string, parent1?: number, parent2?: number) {
 
         this.id = id;
         this.name = name;
@@ -54,6 +55,7 @@ class PoketexModel {
         this.baseEggSteps = baseEggSteps;
         this.experienceGrowth = experienceGrowth;
         this.negativePrompt = negativePrompt;
+        this.imageControlNet = imageControlNet;
     }
 }
 

@@ -293,6 +293,8 @@ export const PoketexPage = () => {
                             :
                             <img src='https://via.placeholder.com/256' width='256' height='256' alt='Pokemon' />
                         }
+
+
                         <div className='mt-3 text-center'>
 
                             <h1>{poketex?.name}</h1>
@@ -303,13 +305,23 @@ export const PoketexPage = () => {
                             <h6><b>Prompt:</b> "{poketex?.prompt}"</h6>
                             {poketex?.negativePrompt !== "" ? <h6><b>Negative Prompt: </b>"{poketex?.negativePrompt}"</h6> : <></>}
 
-                            <div className="container">
-                                <div className="d-flex flex-row">
-                                    <StarsComment rating={totalStars} size={40} />
-                                </div>
+                            <div className="text-center">
+                                <StarsComment rating={totalStars} size={40} />
                             </div>
 
                             <Seed seed={poketex?.seed} />
+                            <hr className="horizontal-line" />
+
+                            {poketex?.imageControlNet ?
+                                <>
+                                    <h6><b>ControlNet image:</b></h6>
+                                    <img src={`${poketex?.imageControlNet}`} width='175' height='175' alt='Pokemon' />
+                                </>
+
+                                :
+                                <></>
+                            }
+
 
                             <div className='my-5'>
                                 <PokemonStats
@@ -321,7 +333,6 @@ export const PoketexPage = () => {
                                     baseTotal={poketex?.baseTotal}
                                 />
                             </div>
-
 
                         </div>
                     </div>
@@ -388,32 +399,59 @@ export const PoketexPage = () => {
 
             {/* MOBILE */}
             <div className='container d-lg-none mt-5'>
-                <div className='d-flex justify-content-center align-items-center'>
-                    {poketex?.image ?
-                        <img src={`data:image/png;base64,${poketex.image}`} width='256' height='256' alt='Pokemon' />
-                        :
-                        <img src='https://via.placeholder.com/256' width='256' height='256' alt='Pokemon' />
-                    }
-                </div>
+
                 <div className='mt-4'>
                     <div className='ml-2'>
-                        <div className='d-flex flex-column align-items-center'>
-                            <h2>{poketex?.name}</h2>
-                            <Link to={`/user/${poketex?.username}`}>
-                                <h5 className='text-primary'>{poketex?.username}</h5>
-                            </Link>
-                            <div className="d-flex flex-row">
-                                <StarsComment rating={totalStars} size={40} />
+                        <div className='col-sm-2 col-md-3 d-flex flex-column align-items-center'>
+
+                            <div className='d-flex justify-content-center align-items-center'>
+                                {poketex?.image ?
+                                    <img src={`data:image/png;base64,${poketex.image}`} width='325' height='325' alt='Pokemon' />
+                                    :
+                                    <img src='https://via.placeholder.com/256' width='256' height='256' alt='Pokemon' />
+                                }
                             </div>
-                            <Seed seed={poketex?.seed} />
-                            <PokemonStats
-                                hp={poketex?.hp}
-                                attack={poketex?.attack}
-                                defense={poketex?.defense}
-                                spDefense={poketex?.spDefense}
-                                speed={poketex?.speed}
-                                baseTotal={poketex?.baseTotal}
-                            />
+
+                            <div className='mt-3 text-center'>
+                                <h1>{poketex?.name}</h1>
+                                <Link to={`/user/${poketex?.username}`}>
+                                    <h5 className='text-primary'>{poketex?.username}</h5>
+                                </Link>
+
+                                <h6><b>Prompt:</b> "{poketex?.prompt}"</h6>
+                                {poketex?.negativePrompt !== "" ? <h6><b>Negative Prompt: </b>"{poketex?.negativePrompt}"</h6> : <></>}
+
+                                <div className="container">
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <StarsComment rating={totalStars} size={40} />
+                                    </div>
+                                </div>
+
+                                <Seed seed={poketex?.seed} />
+                                <hr className="horizontal-line" />
+
+                                {poketex?.imageControlNet ?
+                                    <>
+                                        <h6><b>ControlNet image:</b></h6>
+                                        <img src={`${poketex?.imageControlNet}`} width='175' height='175' alt='Pokemon' />
+                                    </>
+
+                                    :
+                                    <></>
+                                }
+
+
+                                <div className='my-5 text-center'>
+                                    <PokemonStats
+                                        hp={poketex?.hp}
+                                        attack={poketex?.attack}
+                                        defense={poketex?.defense}
+                                        spDefense={poketex?.spDefense}
+                                        speed={poketex?.speed}
+                                        baseTotal={poketex?.baseTotal}
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <p className='lead'>{sectionedDescription}</p>
                         {parent1Data && parent2Data

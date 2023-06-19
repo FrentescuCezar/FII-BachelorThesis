@@ -383,6 +383,18 @@
   z-index: -3;
 }
 
+.trainer-container.trainer1 .trainer-section button {
+  margin-top: 15px;
+  margin-left: 36px;
+  /* Adjust this value as needed */
+}
+
+.trainer-container.trainer2 .trainer-section button {
+  margin-top: 15px;
+  margin-right: -10px;
+  /* Adjust this value as needed */
+}
+
 .trainer-container.reverse .trainer-section {
   align-items: flex-end;
 }

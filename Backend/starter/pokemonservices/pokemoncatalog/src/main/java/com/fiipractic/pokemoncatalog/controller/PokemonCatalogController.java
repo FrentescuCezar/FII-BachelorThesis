@@ -1,6 +1,7 @@
 package com.fiipractic.pokemoncatalog.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fiipractic.pokemoncatalog.model.Poketex;
 import com.fiipractic.pokemoncatalog.requestmodel.PoketexRequest;
 import com.fiipractic.pokemoncatalog.service.PokemonCatalogService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -60,10 +62,14 @@ public class PokemonCatalogController {
 
 
 
-    @GetMapping("/related")
-    public Page<Poketex> getRelatedPokemons(@RequestParam("prompt") String prompt,
-                                            @RequestParam("page") int page,
-                                            @RequestParam("size") int size) {
+    @PostMapping("/related")
+    public Page<Poketex> getRelatedPokemons(@RequestBody JsonNode pokemonPrompt) {
+        String prompt = pokemonPrompt.get("prompt").asText();
+
+        System.out.println(pokemonPrompt + "caca");
+
+        int page = pokemonPrompt.get("page").asInt();
+        int size = pokemonPrompt.get("size").asInt();
         return pokemonCatalogService.findRelatedPokemons(prompt, page, size);
     }
 

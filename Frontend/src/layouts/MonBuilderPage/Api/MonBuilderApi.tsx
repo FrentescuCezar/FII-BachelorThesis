@@ -19,6 +19,8 @@ export async function submitPrompt(
     alwayson_scripts?: any
 ): Promise<string | undefined> {
     setIsImageLoading(true);
+
+    prompt = "white background, simple background, sugimori ken \(style\), pokemon \(creature\)," + prompt + ", no humans, highres, pokemon, other focus, <lora:pokemon_v3_offset:1>"
     const imageRequestModel = new ImageRequestModel(steps, prompt, sampler_index, seed, negative_prompts, alwayson_scripts);
     const url = `http://localhost:8081/api/textToImage`;
 
@@ -116,11 +118,12 @@ export async function submitPokemon(
     generation: number,
     authState: any,
     history: any,
-    negativePrompt?: string,
     imageControlNet?: string,
+    negativePrompt?: string,
     parent1?: number,
     parent2?: number,
 ) {
+
     const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2, imageControlNet);
 
     console.log(JSON.stringify(poketexRequestModel));

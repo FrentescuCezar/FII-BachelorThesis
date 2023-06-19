@@ -280,16 +280,18 @@ export const MonBuilderPage = () => {
                                                 {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
                                             </Button>
                                         </div>
-                                        {isDescriptionLoading && (
+
+                                        {isDescriptionLoading ? (
                                             <div className="mt-2">
                                                 <SpinnerLoading />
                                             </div>
-                                        )}
-                                        {pokemonDescription &&
+                                        ) : (
+                                            pokemonDescription &&
                                             <div className="bubble">
                                                 <p>Pokemon Description: {pokemonDescription}</p>
                                             </div>
-                                        }
+                                        )}
+
                                     </div>
 
 
@@ -305,8 +307,8 @@ export const MonBuilderPage = () => {
                                                 generation,
                                                 authState,
                                                 history,
-                                                negativePrompt,
-                                                imageOfCanvas
+                                                imageOfCanvas,
+                                                negativePrompt
                                             )}
                                         >
                                             Submit Pokemon

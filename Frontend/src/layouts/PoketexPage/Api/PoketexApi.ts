@@ -119,14 +119,23 @@ export async function fetchRelatedPokemons(currentPage: number, poketexesPerPage
   const filteredPrompt = searchWords.filter(word => !stopWords.includes(word.toLowerCase()));
 
   let baseUrl: string = `http://localhost:8084/api/poketex/related?prompt=${filteredPrompt}`;
-  const url: string = `${baseUrl}&page=${currentPage - 1}&size=${poketexesPerPage}`;
+  const url = `http://localhost:8084/api/poketex/related`;
+
+  const payload = {
+    prompt: filteredPrompt.join(' '), // joins the words with space
+    page: currentPage - 1,
+    size: poketexesPerPage,
+  };
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: 'POST',
     headers: {
-      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'accept': 'application/json',
     },
+    body: JSON.stringify(payload),
   });
+
 
   if (!response.ok) {
     throw new Error('The Servers are down. Please try again later.');

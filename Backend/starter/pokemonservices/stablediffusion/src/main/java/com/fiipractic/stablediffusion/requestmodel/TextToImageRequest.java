@@ -1,4 +1,5 @@
 package com.fiipractic.stablediffusion.requestmodel;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Column;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class TextToImageRequest {
     private Integer steps;
     private Long seed;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Add this line
     @Column(columnDefinition = "json")
     private Map<String, Object> alwayson_scripts; // New field
 

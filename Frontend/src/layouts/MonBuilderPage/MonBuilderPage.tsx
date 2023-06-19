@@ -146,18 +146,34 @@ export const MonBuilderPage = () => {
         const sampler_index = "Euler a";
 
 
-        submitPrompt(
-            steps,
-            prompt,
-            sampler_index,
-            setIsImageLoading,
-            setImageData,
-            setSeed,
-            0,
-            seedInput ? parseInt(seedInput) : undefined,
-            negativePrompt,
-            alwaysonScripts
-        );
+        if (isControlNetEnabled) {
+            submitPrompt(
+                steps,
+                prompt,
+                sampler_index,
+                setIsImageLoading,
+                setImageData,
+                setSeed,
+                0,
+                seedInput ? parseInt(seedInput) : undefined,
+                negativePrompt,
+                alwaysonScripts
+            );
+        } else {
+            submitPrompt(
+                steps,
+                prompt,
+                sampler_index,
+                setIsImageLoading,
+                setImageData,
+                setSeed,
+                0,
+                seedInput ? parseInt(seedInput) : undefined,
+                negativePrompt
+            );
+        }
+
+
     };
 
 

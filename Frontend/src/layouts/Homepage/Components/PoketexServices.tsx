@@ -1,7 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { Link } from "react-router-dom";
 
-export const LibraryServices = () => {
+export const PoketexServices = () => {
 
     const { authState } = useOktaAuth();
 
